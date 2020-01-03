@@ -42,7 +42,7 @@ function events_handler($atts = [], $content = null) {
             ob_start();
             ?>
             <div class="d-flex flex-column">
-                <div class="col-sm-10 mx-auto">
+                <div class="mx-auto">
                     <? // Filters ?>
                     <section class="col-sm-5 mb-5 mx-auto">
                         <?
@@ -71,7 +71,7 @@ function events_handler($atts = [], $content = null) {
             ob_start();
             ?>
             <div class="d-flex flex-column">
-                <div class="col-sm-10 mx-auto">
+                <div class="mx-auto">
                     <? // Events ?>
                     <section class="mt-0">
                         <ul class="cah-events">
