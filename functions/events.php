@@ -39,6 +39,7 @@ function events_handler($atts = [], $content = null) {
     */
     switch ($format) {
         case 1:
+            ob_start();
             ?>
             <div class="d-flex flex-column">
                 <div class="col-sm-10 mx-auto">
@@ -64,8 +65,10 @@ function events_handler($atts = [], $content = null) {
                 </div>
             </div>
             <?
+            return ob_get_clean();
             break;
         case 2:
+            ob_start();
             ?>
             <div class="d-flex flex-column">
                 <div class="col-sm-10 mx-auto">
@@ -84,8 +87,10 @@ function events_handler($atts = [], $content = null) {
                 </div>
             </div>
             <?
+            return ob_get_clean();
             break;
         default:
+            ob_start();
             ?>
             <div class="row">
                 <? // Filters ?>
@@ -109,7 +114,7 @@ function events_handler($atts = [], $content = null) {
                 </section>
             </div>
             <?
-
+            return ob_get_clean();
     }
 }
 
