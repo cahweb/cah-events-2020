@@ -52,7 +52,7 @@ function events_handler($atts = [], $content = null) {
 
                     <? // Events ?>
                     <section class="mt-0">
-                        <ul class="cah-events">
+                        <ul class="list-unstyled">
                             <?
                                 print_handler($num_events_to_show);
                             ?>
@@ -74,7 +74,7 @@ function events_handler($atts = [], $content = null) {
                 <div class="mx-auto">
                     <? // Events ?>
                     <section class="mt-0">
-                        <ul class="cah-events">
+                        <ul class="list-unstyled">
                             <?
                                 print_handler($num_events_to_show);
                             ?>
@@ -98,7 +98,7 @@ function events_handler($atts = [], $content = null) {
 
                 <? // Events ?>
                 <section class="col-sm-9 mt-0">
-                    <ul class="cah-events">
+                    <ul class="list-unstyled">
                         <?
                             print_handler($num_events_to_show);
                         ?>
