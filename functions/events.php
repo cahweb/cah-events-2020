@@ -79,10 +79,6 @@ function events_handler($atts = [], $content = null) {
                                 print_handler($num_events_to_show);
                             ?>
                         </ul>
-
-                        <?
-                            events_pagination($num_events_to_show);
-                        ?>
                     </section>
                 </div>
             </div>
