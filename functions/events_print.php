@@ -51,16 +51,14 @@ function print_handler($number_events_to_show) {
 function event_item_template($link, $start, $end, $title, $category, $description) {
     ?>
         <a class="cah-event-item" href=<?= $link ?>>
-            <li class="mb-4 pt-2 cah-event-item">
-                <p name="date-range" class="h5 text-primary">
+            <li class="cah-event-item">
+                <p name="date-range" class="h5 text-primary cah-event-item-date">
                     <?= date("F j, Y", $start) ?><span class="ml-1">,</span> <span class="ml-2"><?= date("g A", $start) . " &ndash; " . date("g A", $end) ?></span>
                 </p>
 
                 <p name="title" class="h5 text-secondary"><?= $title ?></p>
-
-                <!-- <h4 name="category"><?// $category ?></h3> -->
         
-                <p name="description" class="text-muted"><?= strip_tags(substr($description, 0, 300) . " . . . ") ?></p>
+                <p name="description" class="text-muted mb-0"><?= strip_tags(substr($description, 0, 300) . " . . . ") ?></p>
             </li>
         </a>
 

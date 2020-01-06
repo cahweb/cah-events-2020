@@ -20,43 +20,11 @@ a.cah-event-item {
     .cah-event-item li {
         list-style-type: none;
         margin-bottom: 0.2em;
+        margin-left: -1.2em;
         padding: 1.2em;
     }
         .cah-event-item li:hover {
-            background-color:#eee;
-        }
-        .cah-event-item h1 {
-            color:#ffc904;
-            font-size: 1.25em;
-            font-weight: 400;
-            margin-bottom: 0.5em;
-        }
-        .cah-event-item h2 {
-            color: #333;
-            font-size: 1.25em;
-            font-weight: 400;
-            margin-bottom: 0.5em;
-            text-transform: none;
-        }
-        .cah-event-item h3 {
-            color: rgb(207, 58, 108);
-            font-size: 1em;
-            font-weight: 400;
-            margin-bottom: 0.5em;
-            text-transform: none;
-        }
-        .cah-event-item h4 {
-            color: rgb(122, 190, 187);
-            font-size: 0.9em;
-            font-weight: 400;
-            margin-bottom: 0.5em;
-            text-transform: none;
-        }
-        .cah-event-item p {
-            color:#666;
-            font-size: 0.9em;
-            font-weight: 300;
-            margin-bottom: 0;
+            background-color:rgb(243, 243, 243);
         }
 
 .cah-event-filter-button {
