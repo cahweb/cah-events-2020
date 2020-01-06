@@ -17,11 +17,11 @@ function events_handler($atts = [], $content = null) {
     // Attributes given in the shortcode call in Wordpress
     $attributes = shortcode_atts([
         'format' => 0,
-        'number-of-events-to-show-per-page' => 5,
+        'num-of-events-to-show' => 5,
     ], $atts);
 
     $format = $attributes['format'];
-    $num_events_to_show = $attributes['number-of-events-to-show-per-page'];
+    $num_events_to_show = $attributes['num-of-events-to-show'];
 
     // Flag for no events in a month.
     // !WARNING: Not sure if this is needed, it's not in global scope.
