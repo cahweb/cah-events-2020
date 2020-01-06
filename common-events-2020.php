@@ -21,4 +21,7 @@ include "functions/events_pagination.php";
 // // Developer functions for testing and debugging. Remove in production.
 // include "functions/dev.php";
 
+// Custom styles.
+wp_enqueue_style('events-styles', plugin_dir_url( __FILE__ ) . '/styles/events.css');
+
 ?>

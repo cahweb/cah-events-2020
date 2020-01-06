@@ -50,8 +50,8 @@ function print_handler($number_events_to_show) {
 // Handles individual event's html. Description length is shorted to 300 characters.
 function event_item_template($link, $start, $end, $title, $category, $description) {
     ?>
-        <a class="" href=<?= $link ?>>
-            <li class="mb-4 pt-2">
+        <a class="cah-event-item" href=<?= $link ?>>
+            <li class="mb-4 pt-2 cah-event-item">
                 <p name="date-range" class="h5 text-primary">
                     <?= date("F j, Y", $start) ?><span class="ml-1">,</span> <span class="ml-2"><?= date("g A", $start) . " &ndash; " . date("g A", $end) ?></span>
                 </p>
