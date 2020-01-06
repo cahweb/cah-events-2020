@@ -8,8 +8,6 @@
     License URI: https://www.gnu.org/licenses/gpl-2.0.html
 */
 
-// wp_enqueue_style('events-styles', get_stylesheet_directory_uri() . '/styles/events.css');
-
 // Essentially the function's main, except this is the actual main.
 include "functions/events.php";
 
