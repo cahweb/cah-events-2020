@@ -31,7 +31,8 @@ function spaced_array($strings) {
 	}
 }
 
-function test() {
+// Renamed because it interferes with some other function and crashes cah.ucf.edu.
+function test123() {
     spaced("TEST");
 }
 

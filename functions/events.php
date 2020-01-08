@@ -4,7 +4,7 @@
 */
 
 // Shortcode used in Wordpress is the first parameter.
-add_shortcode("events", "events_handler");
+add_shortcode('events', 'events_handler');
 
 // Sets timezone to EST.
 date_default_timezone_set("America/New_York");
@@ -13,15 +13,19 @@ global $events;
 global $num_total_events;
 global $num_of_pages;
 
-function events_handler($atts = [], $content = null) {
+function events_handler($atts = []) {
     // Attributes given in the shortcode call in Wordpress
     $attributes = shortcode_atts([
         'format' => 0,
         'num-of-events-to-show' => 5,
+        'testat2' => 0,
     ], $atts);
 
     $format = $attributes['format'];
     $num_events_to_show = $attributes['num-of-events-to-show'];
+
+    // Shortcodes don't work now for some reason, asides from the two above.
+    echo "<strong>testat2: </strong>" .  $atts['testat2'];
 
     // Flag for no events in a month.
     // !WARNING: Not sure if this is needed, it's not in global scope.
