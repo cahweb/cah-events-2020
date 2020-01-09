@@ -16,16 +16,20 @@ global $num_of_pages;
 function events_handler($atts = []) {
     // Attributes given in the shortcode call in Wordpress
     $attributes = shortcode_atts([
+        'filter' => '',
         'format' => 0,
-        'num-of-events-to-show' => 5,
-        'testat2' => 0,
+        'num-events' => 5,
     ], $atts);
 
+    $filter = $attributes['filter'];
     $format = $attributes['format'];
-    $num_events_to_show = $attributes['num-of-events-to-show'];
+    $num_events_to_show = $attributes['num-events'];
 
-    // Shortcodes don't work now for some reason, asides from the two above.
-    echo "<strong>testat2: </strong>" .  $atts['testat2'];
+    test_cont(array(
+        test_str_h("Filter", $filter),
+        test_str_h("Format", $format),
+        test_str_h("Number of events to show", $num_events_to_show),
+    ));
 
     // Flag for no events in a month.
     // !WARNING: Not sure if this is needed, it's not in global scope.
