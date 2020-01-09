@@ -4,43 +4,56 @@
     Specifically, for printing events.
 */
 
-function print_handler($number_events_to_show) {
+function print_handler($format, $filter, $number_events_to_show) {
     $events = events_index();
     $num_of_events = count($events);
     $page_number = page_number();
+
+    // Where there is no filter set, so display all events.
+    if ($filter === '' || strcasecmp($filter, "all") === 0) {
+        $filter = '';
+    }
 
     if (empty($events)) {
         ?>
             <p class="text-center text-muted my-5"><em>There are currently no active or upcoming events listed.</em></p>
         <?
     } else {
-        // // Prints all events
-        // foreach (events_index() as $event) {
-        //     $start = strtotime($event->starts);
-        //     $end = strtotime($event->ends);
-            
-        //     $category = parse_event_category($event->tags);
-            
-        //     event_item_template($event->url, $start, $end, $event->title, $category, $event->description);
-        // }
-
-        // Great names, I know. This is just to make writing the for loop simpler.
-        // Includes logic that prints the number of events specified, divided into pages.
-        $x = ($page_number - 1) * $number_events_to_show;
-        $y = $number_events_to_show * $page_number;
-
-        for ($i = $x; $i < $y; $i++) {
-            if ($i >= $num_of_events) {
-                // Break added for the last page, where the number of events might not equal to the amount needed to print.
-                // Out of bounds conditional.
-                break;
-            } else {
-                $start = strtotime($events[$i]->starts);
-                $end = strtotime($events[$i]->ends);
-                
+        // Prints all events in a category only for format 2.
+        if ($format == 2 && $filter !== '') {
+            for ($i = 0; $i < $number_events_to_show; $i++) {
                 $category = parse_event_category($events[$i]->tags);
-                
-                event_item_template($events[$i]->url, $start, $end, $events[$i]->title, $category, $events[$i]->description);
+
+                if (strcasecmp($category, $filter) !== 0) {
+                    $number_events_to_show++;
+                } else {
+                    $start = strtotime($events[$i]->starts);
+                    $end = strtotime($events[$i]->ends);
+    
+                    event_item_template($events[$i]->url, $start, $end, $events[$i]->title, $category, $events[$i]->description);
+                }
+            }
+        } else {
+            // Pagination
+            
+            // Great names, I know. This is just to make writing the for loop simpler.
+            // Includes logic that prints the number of events specified, divided into pages.
+            $x = ($page_number - 1) * $number_events_to_show;
+            $y = $number_events_to_show * $page_number;
+    
+            for ($i = $x; $i < $y; $i++) {
+                if ($i >= $num_of_events) {
+                    // Break added for the last page, where the number of events might not equal to the amount needed to print.
+                    // Out of bounds conditional.
+                    break;
+                } else {
+                    $start = strtotime($events[$i]->starts);
+                    $end = strtotime($events[$i]->ends);
+       
+                    $category = parse_event_category($events[$i]->tags);
+    
+                    event_item_template($events[$i]->url, $start, $end, $events[$i]->title, $category, $events[$i]->description);
+                }
             }
         }
     }

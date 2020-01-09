@@ -47,7 +47,7 @@ function test_str($string) {
 }
 
 function test_str_h($label, $data) {
-    if ($data === '' || $data === NULL || $data === 0) {
+    if ($data === '' || $data === NULL) {
         return "<strong>" . $label . "</strong>: <em class='text-muted'>Data does not exist.</em>";
     } else {
         return "<strong>" . $label . "</strong>: " . $data;

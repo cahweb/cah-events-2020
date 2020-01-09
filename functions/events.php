@@ -25,11 +25,7 @@ function events_handler($atts = []) {
     $format = $attributes['format'];
     $num_events_to_show = $attributes['num-events'];
 
-    test_cont(array(
-        test_str_h("Filter", $filter),
-        test_str_h("Format", $format),
-        test_str_h("Number of events to show", $num_events_to_show),
-    ));
+    
 
     // Flag for no events in a month.
     // !WARNING: Not sure if this is needed, it's not in global scope.
@@ -62,7 +58,7 @@ function events_handler($atts = []) {
                     <section class="mt-0">
                         <ul class="list-unstyled">
                             <?
-                                print_handler($num_events_to_show);
+                                print_handler($format, $filter, $num_events_to_show);
                             ?>
                         </ul>
 
@@ -84,7 +80,7 @@ function events_handler($atts = []) {
                     <section class="mt-0">
                         <ul class="list-unstyled">
                             <?
-                                print_handler($num_events_to_show);
+                                print_handler($format, $filter, $num_events_to_show);
                             ?>
                         </ul>
                     </section>
@@ -108,7 +104,7 @@ function events_handler($atts = []) {
                 <section class="col-sm-9 mt-0">
                     <ul class="list-unstyled">
                         <?
-                            print_handler($num_events_to_show);
+                            print_handler($format, $filter, $num_events_to_show);
                         ?>
                     </ul>
 
