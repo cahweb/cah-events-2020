@@ -1,6 +1,10 @@
 <?
 /*
     Upcoming Events
+
+    TODO: Add shortcode to toggle pagination. Also for format 2.
+    TODO: Add shortcode to toggle filters dropdown.
+    TODO: Think of a more elegant way to accomplish this.
 */
 
 // Shortcode used in Wordpress is the first parameter.
