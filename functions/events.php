@@ -209,6 +209,10 @@ function parsed_events_index() {
             $day_range = 0;
 
             for ($i = 0; $i < $num_of_events; $i++) {
+                // Converts start and ending date and times to datetime format for easier parsing.
+                $original_events_array[$i]->starts = date_create($original_events_array[$i]->starts);
+                $original_events_array[$i]->ends = date_create($original_events_array[$i]->ends);
+
                 if ($i === 0) {
                     array_push($parsed_events_array, $original_events_array[$i]);
 

@@ -27,10 +27,7 @@ function print_handler($format, $filter, $number_events_to_show) {
                 if (strcasecmp($category, $filter) !== 0) {
                     $number_events_to_show++;
                 } else {
-                    $start = strtotime($events[$i]->starts);
-                    $end = strtotime($events[$i]->ends);
-    
-                    event_item_template($events[$i]->url, $start, $end, $events[$i]->title, $category, $events[$i]->description);
+                    event_item_template($events[$i]->url, $events[$i]->starts, $events[$i]->ends, $events[$i]->title, $category, $events[$i]->description);
                 }
             }
         } else {
@@ -47,12 +44,9 @@ function print_handler($format, $filter, $number_events_to_show) {
                     // Out of bounds conditional.
                     break;
                 } else {
-                    $start = strtotime($events[$i]->starts);
-                    $end = strtotime($events[$i]->ends);
-       
                     $category = parse_event_category($events[$i]->tags);
     
-                    event_item_template($events[$i]->url, $start, $end, $events[$i]->title, $category, $events[$i]->description);
+                    event_item_template($events[$i]->url, $events[$i]->starts, $events[$i]->ends, $events[$i]->title, $category, $events[$i]->description);
 
                     test_cont(array(
                         test_str_h("\$events[$i]->event_id", $events[$i]->event_id),
@@ -70,7 +64,7 @@ function event_item_template($link, $start, $end, $title, $category, $descriptio
         <a class="cah-event-item" href=<?= $link ?>>
             <li class="cah-event-item">
                 <p name="date-range" class="h5 text-primary cah-event-item-date">
-                    <?= date("F j, Y", $start) ?><span>,</span> <span><?= date("g A", $start) . " &ndash; " . date("g A", $end) ?></span>
+                    <?= date_format($start, "F j, Y") ?><span>,</span> <span><?= date_format($start, "g A") . " &ndash; " . date_format($end, "g A") ?></span>
                 </p>
 
                 <p name="title" class="h5 text-secondary"><?= $title ?></p>
