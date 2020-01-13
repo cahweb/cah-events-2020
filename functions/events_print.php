@@ -27,7 +27,7 @@ function print_handler($format, $filter, $number_events_to_show) {
                 if (strcasecmp($category, $filter) !== 0) {
                     $number_events_to_show++;
                 } else {
-                    event_item_template($events[$i]->url, $events[$i]->starts, $events[$i]->ends, $events[$i]->title, $category, $events[$i]->description);
+                    event_item_template($events[$i]->url, $events[$i]->starts, $events[$i]->ends, $events[$i]->title, $category, $events[$i]->description, $date_range_flag);
                 }
             }
         } else {
@@ -45,11 +45,23 @@ function print_handler($format, $filter, $number_events_to_show) {
                     break;
                 } else {
                     $category = parse_event_category($events[$i]->tags);
+
+                    // Determines whether or not to print a date range.
+                    $diff = date_diff($events[$i]->starts, $events[$i]->ends, true);
+                    
+                    if ($events[$i]->starts == $events[$i]->ends) {
+                        $date_range_flag = false;
+                    } else {
+                        $date_range_flag = true;
+                    }
     
-                    event_item_template($events[$i]->url, $events[$i]->starts, $events[$i]->ends, $events[$i]->title, $category, $events[$i]->description);
+                    event_item_template($events[$i]->url, $events[$i]->starts, $events[$i]->ends, $events[$i]->title, $category, $events[$i]->description, $date_range_flag);
 
                     test_cont(array(
                         test_str_h("\$events[$i]->event_id", $events[$i]->event_id),
+                        test_str_h("Starts", date_format($events[$i]->starts, "D, Y m d - H:i:s")),
+                        test_str_h("Ends", date_format($events[$i]->ends, "D, Y m d - H:i:s")),
+                        test_str_h("Date diff", $diff->format("%R%a days")),
                     ));
                 }
             }
@@ -59,12 +71,18 @@ function print_handler($format, $filter, $number_events_to_show) {
 }
 
 // Handles individual event's html. Description length is shorted to 300 characters.
-function event_item_template($link, $start, $end, $title, $category, $description) {
+function event_item_template($link, $start, $end, $title, $category, $description, $date_range_flag) {
+    if ($_GLOBAL['dev'] && $date_range_flag) {
+        $event_datetime = date_format($start, "F j") . " &ndash; " . date_format($end, "j, Y") . ", " . "<span>" .  date_format($start, "g A") . " &ndash; " . date_format($end, "g A") . "</span>";
+    } else {
+        $event_datetime = date_format($start, "F j, Y") . ", " . "<span>" .  date_format($start, "g A") . " &ndash; " . date_format($end, "g A") . "</span>";
+    }
+
     ?>
         <a class="cah-event-item" href=<?= $link ?>>
             <li class="cah-event-item">
                 <p name="date-range" class="h5 text-primary cah-event-item-date">
-                    <?= date_format($start, "F j, Y") ?><span>,</span> <span><?= date_format($start, "g A") . " &ndash; " . date_format($end, "g A") ?></span>
+                    <?= $event_datetime ?>
                 </p>
 
                 <p name="title" class="h5 text-secondary"><?= $title ?></p>
