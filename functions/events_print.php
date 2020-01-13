@@ -66,7 +66,7 @@ function event_item_template($link, $start, $end, $title, $category, $descriptio
         <a class="cah-event-item" href=<?= $link ?>>
             <li class="cah-event-item">
                 <p name="date-range" class="h5 text-primary cah-event-item-date">
-                    <?= date("F j, Y", $start) ?><span class="ml-1">,</span> <span class="ml-2"><?= date("g A", $start) . " &ndash; " . date("g A", $end) ?></span>
+                    <?= date("F j, Y", $start) ?><span>,</span> <span><?= date("g A", $start) . " &ndash; " . date("g A", $end) ?></span>
                 </p>
 
                 <p name="title" class="h5 text-secondary"><?= $title ?></p>
