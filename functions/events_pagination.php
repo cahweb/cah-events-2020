@@ -9,7 +9,7 @@ function events_pagination($num_events_to_show) {
     // !WARNING: Pagination is not responsive!
     // So beyond 20 or so pages, it'll run out of its containing div, and quite possibly the screen.
 
-    $GLOBALS['events'] = events_index();
+    $GLOBALS['events'] = parsed_events_index();
     $GLOBALS['num_total_events'] = count($GLOBALS['events']);
 
     // Number of pages to generate for pagination.

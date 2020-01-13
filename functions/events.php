@@ -16,20 +16,33 @@ date_default_timezone_set("America/New_York");
 global $events;
 global $num_total_events;
 global $num_of_pages;
+global $hide_recurrence;
+global $dev;
 
 function events_handler($atts = []) {
     // Attributes given in the shortcode call in Wordpress
     $attributes = shortcode_atts([
+        'dev' => false,
+        'hide-recurrence' => false,
         'filter' => '',
         'format' => 0,
         'num-events' => 5,
     ], $atts);
 
+    $hide_recurrence = $attributes['hide-recurrence'];
+    $GLOBALS['hide_recurrence'] = $hide_recurrence;
     $filter = $attributes['filter'];
     $format = $attributes['format'];
     $num_events_to_show = $attributes['num-events'];
 
-    
+    // Allows changes to dev site without affecting other live sites.
+    $GLOBALS['dev'] = $attributes['dev'];
+    if ($GLOBALS['dev']) {
+        test_cont(array(
+            test_str_h("\$GLOBALS['dev']", $GLOBALS['dev']),
+            test_str_h("\$hide_recurrence", $hide_recurrence),
+        ));
+    }
 
     // Flag for no events in a month.
     // !WARNING: Not sure if this is needed, it's not in global scope.
@@ -124,7 +137,7 @@ function events_handler($atts = []) {
 
 // Function to index all events into an array for pagnination. This indexing function can possibly be merged with total_number_of_months();
 // TODO: Add consideration for current active category.
-function events_index() {
+function index_events() {
     $events = array();
 
     $current_year = date_create('Y');
@@ -166,7 +179,11 @@ function events_index() {
                 // Pushes each event into an array depending on which category is currently active.
                 // Added comparison to empty string for format 2 for filters.
                 if ($activeCat == "All" || $activeCat == "") {
-                    array_push($events, $event);
+                    if ($i > 0 && $hide_recurrence && $previous_id !== $event->event_id) {
+                    } else {
+                        $previous_id = $events->event_id;
+                        array_push($events, $event);
+                    }
                 } else if (strpos($activeCat, $category) !== FALSE) {
                     array_push($events, $event);
                 }
@@ -177,6 +194,55 @@ function events_index() {
     }
 
     return $events;
+}
+
+// Checks for recurrences in events if option is activated and returns the parsed array of events.
+function parsed_events_index() {
+    $original_events_array = index_events();
+    $num_of_events = count($original_events_array);
+    $parsed_events_array = array();
+
+    if ($GLOBALS['dev']) {
+        if ($GLOBALS['hide_recurrence']) {
+            // To keep track of the previous and next event id in the array.
+            $previous_event_id = 0;
+            $next_event_id = 0;
+
+            for ($i = 0; $i < $num_of_events; $i++) {
+                if ($i === 0) {
+                    array_push($parsed_events_array, $original_events_array[$i]);
+
+                    $previous_event_id = $original_events_array[$i]->event_id;
+                } else {
+                    $current_event_id = $original_events_array[$i]->event_id;
+                    
+                    if ($i < $num_of_events - 1) {
+                        $next_event_id = $original_events_array[$i + 1]->event_id;
+                    }
+                    
+                    // test_cont(array(
+                    //     test_str_h("\$previous_event_id", $previous_event_id),
+                    //     test_str_h("\$current_event_id", $current_event_id),
+                    //     test_str_h("\$parsed_events_array count", count($parsed_events_array)),
+                    //     // print_r($parsed_events_array),
+                    // ));
+
+                    if ($previous_event_id !== $current_event_id) {
+                        array_push($parsed_events_array, $original_events_array[$i]);
+                        
+                        $previous_event_id = $current_event_id;
+                    } else {
+                    }
+                }
+            }
+    
+            return $parsed_events_array;
+        } else {
+            return $original_events_array;
+        }
+    } else {
+        return $original_events_array;
+    }
 }
 
 ?>
