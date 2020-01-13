@@ -204,9 +204,9 @@ function parsed_events_index() {
 
     if ($GLOBALS['dev']) {
         if ($GLOBALS['hide_recurrence']) {
-            // To keep track of the previous and next event id in the array.
+            // To keep track of the previous event id in the array.
             $previous_event_id = 0;
-            $next_event_id = 0;
+            $day_range = 0;
 
             for ($i = 0; $i < $num_of_events; $i++) {
                 if ($i === 0) {
@@ -216,22 +216,12 @@ function parsed_events_index() {
                 } else {
                     $current_event_id = $original_events_array[$i]->event_id;
                     
-                    if ($i < $num_of_events - 1) {
-                        $next_event_id = $original_events_array[$i + 1]->event_id;
-                    }
-                    
-                    // test_cont(array(
-                    //     test_str_h("\$previous_event_id", $previous_event_id),
-                    //     test_str_h("\$current_event_id", $current_event_id),
-                    //     test_str_h("\$parsed_events_array count", count($parsed_events_array)),
-                    //     // print_r($parsed_events_array),
-                    // ));
-
                     if ($previous_event_id !== $current_event_id) {
                         array_push($parsed_events_array, $original_events_array[$i]);
                         
                         $previous_event_id = $current_event_id;
                     } else {
+                        $day_range++;
                     }
                 }
             }

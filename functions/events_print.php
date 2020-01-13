@@ -53,6 +53,10 @@ function print_handler($format, $filter, $number_events_to_show) {
                     $category = parse_event_category($events[$i]->tags);
     
                     event_item_template($events[$i]->url, $start, $end, $events[$i]->title, $category, $events[$i]->description);
+
+                    test_cont(array(
+                        test_str_h("\$events[$i]->event_id", $events[$i]->event_id),
+                    ));
                 }
             }
         }
