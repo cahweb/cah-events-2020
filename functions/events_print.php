@@ -72,10 +72,14 @@ function print_handler($format, $filter, $number_events_to_show) {
 
 // Handles individual event's html. Description length is shorted to 300 characters.
 function event_item_template($link, $start, $end, $title, $category, $description, $date_range_flag) {
-    if ($_GLOBAL['dev'] && $date_range_flag) {
-        $event_datetime = date_format($start, "F j") . " &ndash; " . date_format($end, "j, Y") . ", " . "<span>" .  date_format($start, "g A") . " &ndash; " . date_format($end, "g A") . "</span>";
+    if ($_GLOBAL['dev']) {
+        if ($date_range_flag) {
+            $event_datetime = date_format($start, "F j") . " &ndash; " . date_format($end, "j, Y") . ", " . "<span>" .  date_format($start, "g A") . " &ndash; " . date_format($end, "g A") . "</span>";
+        } else {
+            $event_datetime = date_format($start, "F j, Y") . ", " . "<span>" .  date_format($start, "g A") . " &ndash; " . date_format($end, "g A") . "</span>";
+        }
     } else {
-        $event_datetime = date_format($start, "F j, Y") . ", " . "<span>" .  date_format($start, "g A") . " &ndash; " . date_format($end, "g A") . "</span>";
+        $event_datetime = date("F j, Y", strtotime($start)) . "<span>,</span> <span>" . date("g A", strtotime($start)) . " &ndash; " . date("g A", strtotime($end)) . " </span>";
     }
 
     ?>
