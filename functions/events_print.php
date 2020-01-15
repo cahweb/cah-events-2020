@@ -22,13 +22,7 @@ function print_handler($format, $filter, $number_events_to_show) {
         // Prints all events in a category only for format 2.
         if ($format == 2 && $filter !== '') {
             for ($i = 0; $i < $number_events_to_show; $i++) {
-                $category = parse_event_category($events[$i]->tags);
-
-                if (strcasecmp($category, $filter) !== 0) {
-                    $number_events_to_show++;
-                } else {
-                    event_item_template($events[$i]->url, $events[$i]->starts, $events[$i]->ends, $events[$i]->title, $category, $events[$i]->description, $date_range_flag);
-                }
+                event_item_template($events[$i]);
             }
         } else {
             // Pagination
@@ -44,23 +38,13 @@ function print_handler($format, $filter, $number_events_to_show) {
                     // Out of bounds conditional.
                     break;
                 } else {
-                    $category = parse_event_category($events[$i]->tags);
-
-                    // Determines whether or not to print a date range.
-                    if ($events[$i]->day_range > 0) {
-                        $date_range_flag = true;
-                    } else {
-                        $date_range_flag = false;
-                    }
-    
-                    event_item_template($events[$i]->url, $events[$i]->starts, $events[$i]->ends, $events[$i]->title, $category, $events[$i]->description, $date_range_flag);
+                    event_item_template($events[$i]);
 
                     if ($GLOBALS['dev']) {
                         test_cont(array(
                             test_str_h("\$events[$i]->event_id", $events[$i]->event_id),
                             test_str_h("Starts", date_format($events[$i]->starts, "D, Y m d - H:i:s")),
-                            test_str_h("Ends", date_format($events[$i]->ends, "D, Y m d - H:i:s")),
-                            test_str_h("\$date_range_flag", $date_range_flag),
+                            test_str_h("Original Ends", date_format($events[$i]->ends, "D, Y m d - H:i:s")),
                             test_str_h("\$events[$i]->day_range", $events[$i]->day_range),
                         ));
                     }
@@ -72,13 +56,24 @@ function print_handler($format, $filter, $number_events_to_show) {
 }
 
 // Handles individual event's html. Description length is shorted to 300 characters.
-function event_item_template($link, $start, $end, $title, $category, $description, $date_range_flag) {
+function event_item_template($event) {
+    $link = $event->url;
+    $start = $event->starts;
+    $end = $event->ends;
+    $title = $event->title;
+    $category = parse_event_category($event->tags);
+    $description = $event->description;
+    $day_range = $event->day_range;
+
     if ($GLOBALS['dev']) {
-        // test_cont(array(
-        //     test_str_h("Date type", gettype($start)),
-        // ));
-        
-        if ($date_range_flag) {
+        // Determines whether or not to print a date range.
+        if ($event->day_range > 0) {
+            date_modify($end, "+" . $day_range . " days");
+
+            test_cont(array(
+                test_str_h("End", date_format($end, "D, Y m d - H:i:s")),
+            ));
+
             $event_datetime = date_format($start, "F j") . " &ndash; " . date_format($end, "j, Y") . ", " . "<span>" .  date_format($start, "g A") . " &ndash; " . date_format($end, "g A") . "</span>";
         } else {
             $event_datetime = date_format($start, "F j, Y") . ", " . "<span>" .  date_format($start, "g A") . " &ndash; " . date_format($end, "g A") . "</span>";
@@ -96,7 +91,7 @@ function event_item_template($link, $start, $end, $title, $category, $descriptio
 
                 <p name="title" class="h5 text-secondary"><?= $title ?></p>
         
-                <p name="description" class="text-muted mb-0"><?= strip_tags(substr($description, 0, 300) . " . . . ") ?></p>
+                <p name="description" class="text-muted mb-0"><?= strlen($description) > 300 ? strip_tags(substr($description, 0, 300) . " . . . ") : strip_tags($description) ?></p>
             </li>
         </a>
 
