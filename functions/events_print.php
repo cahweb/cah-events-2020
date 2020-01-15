@@ -39,15 +39,6 @@ function print_handler($format, $filter, $number_events_to_show) {
                     break;
                 } else {
                     event_item_template($events[$i]);
-
-                    if ($GLOBALS['dev']) {
-                        test_cont(array(
-                            test_str_h("\$events[$i]->event_id", $events[$i]->event_id),
-                            test_str_h("Starts", date_format($events[$i]->starts, "D, Y m d - H:i:s")),
-                            test_str_h("Original Ends", date_format($events[$i]->ends, "D, Y m d - H:i:s")),
-                            test_str_h("\$events[$i]->day_range", $events[$i]->day_range),
-                        ));
-                    }
                 }
             }
         }
@@ -65,22 +56,14 @@ function event_item_template($event) {
     $description = $event->description;
     $day_range = $event->day_range;
 
-    if ($GLOBALS['dev']) {
         // Determines whether or not to print a date range.
         if ($event->day_range > 0) {
             date_modify($end, "+" . $day_range . " days");
-
-            test_cont(array(
-                test_str_h("End", date_format($end, "D, Y m d - H:i:s")),
-            ));
 
             $event_datetime = date_format($start, "F j") . " &ndash; " . date_format($end, "j, Y") . ", " . "<span>" .  date_format($start, "g A") . " &ndash; " . date_format($end, "g A") . "</span>";
         } else {
             $event_datetime = date_format($start, "F j, Y") . ", " . "<span>" .  date_format($start, "g A") . " &ndash; " . date_format($end, "g A") . "</span>";
         }
-    } else {
-        $event_datetime = date("F j, Y", strtotime($start)) . "<span>,</span> <span>" . date("g A", strtotime($start)) . " &ndash; " . date("g A", strtotime($end)) . " </span>";
-    }
 
     ?>
         <a class="cah-event-item" href=<?= $link ?>>

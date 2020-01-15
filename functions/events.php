@@ -37,12 +37,6 @@ function events_handler($atts = []) {
 
     // Allows changes to dev site without affecting other live sites.
     $GLOBALS['dev'] = $attributes['dev'];
-    if ($GLOBALS['dev']) {
-        // test_cont(array(
-        //     test_str_h("\$GLOBALS['dev']", $GLOBALS['dev']),
-        //     test_str_h("\$hide_recurrence", $hide_recurrence),
-        // ));
-    }
 
     // Flag for no events in a month.
     // !WARNING: Not sure if this is needed, it's not in global scope.
@@ -202,48 +196,44 @@ function parsed_events_index() {
     $num_of_events = count($original_events_array);
     $parsed_events_array = array();
 
-    if ($GLOBALS['dev']) {
-        if ($GLOBALS['hide_recurrence']) {
-            // To keep track of the previous event id in the array.
-            $previous_event_id = 0;
-            $day_range = 0;
+    if ($GLOBALS['hide_recurrence']) {
+        // To keep track of the previous event id in the array.
+        $previous_event_id = 0;
+        $day_range = 0;
 
-            for ($i = 0; $i < $num_of_events; $i++) {
-                // Converts start and ending date and times to datetime format for easier parsing.
-                $original_events_array[$i]->starts = date_create($original_events_array[$i]->starts);
-                $original_events_array[$i]->ends = date_create($original_events_array[$i]->ends);
+        for ($i = 0; $i < $num_of_events; $i++) {
+            // Converts start and ending date and times to datetime format for easier parsing.
+            $original_events_array[$i]->starts = date_create($original_events_array[$i]->starts);
+            $original_events_array[$i]->ends = date_create($original_events_array[$i]->ends);
 
-                if ($i === 0) {
-                    array_push($parsed_events_array, $original_events_array[$i]);
+            if ($i === 0) {
+                array_push($parsed_events_array, $original_events_array[$i]);
 
-                    $previous_event_id = $original_events_array[$i]->event_id;
-                } else {
-                    $current_event_id = $original_events_array[$i]->event_id;
+                $previous_event_id = $original_events_array[$i]->event_id;
+            } else {
+                $current_event_id = $original_events_array[$i]->event_id;
                     
-                    if ($previous_event_id !== $current_event_id) {
-                        if ($day_range > 0) {
-                            $last_parsed = count($parsed_events_array) - 1;
+                if ($previous_event_id !== $current_event_id) {
+                    if ($day_range > 0) {
+                        $last_parsed = count($parsed_events_array) - 1;
     
-                            $parsed_events_array[$last_parsed]->day_range = $day_range;
+                        $parsed_events_array[$last_parsed]->day_range = $day_range;
 
-                            $day_range = 0;
-                        }
-
-                        $original_events_array[$i]->day_range = 0;
-                    
-                        array_push($parsed_events_array, $original_events_array[$i]);
-                        
-                        $previous_event_id = $current_event_id;
-                    } else {
-                        $day_range++;
+                        $day_range = 0;
                     }
-                }
+
+                    $original_events_array[$i]->day_range = 0;
+                    
+                    array_push($parsed_events_array, $original_events_array[$i]);
+                        
+                    $previous_event_id = $current_event_id;
+                } else {
+                    $day_range++;
+                    }
             }
-    
-            return $parsed_events_array;
-        } else {
-            return $original_events_array;
         }
+    
+        return $parsed_events_array;
     } else {
         return $original_events_array;
     }
