@@ -19,6 +19,10 @@ function print_handler($format, $filter, $number_events_to_show) {
             <p class="text-center text-muted my-5"><em>There are currently no active or upcoming events listed.</em></p>
         <?
     } else {
+        if ($num_of_events < $number_events_to_show) {
+            $number_events_to_show = $num_of_events;
+        }
+
         // Prints all events in a category only for format 2.
         if ($format == 2 && $filter !== '') {
             for ($i = 0; $i < $number_events_to_show; $i++) {
@@ -56,14 +60,14 @@ function event_item_template($event) {
     $description = $event->description;
     $day_range = $event->day_range;
 
-        // Determines whether or not to print a date range.
-        if ($event->day_range > 0) {
-            date_modify($end, "+" . $day_range . " days");
+    // Determines whether or not to print a date range.
+    if ($event->day_range > 0) {
+        date_modify($end, "+" . $day_range . " days");
 
-            $event_datetime = date_format($start, "F j") . " &ndash; " . date_format($end, "j, Y") . ", " . "<span>" .  date_format($start, "g A") . " &ndash; " . date_format($end, "g A") . "</span>";
-        } else {
-            $event_datetime = date_format($start, "F j, Y") . ", " . "<span>" .  date_format($start, "g A") . " &ndash; " . date_format($end, "g A") . "</span>";
-        }
+        $event_datetime = date_format($start, "F j") . " &ndash; " . date_format($end, "j, Y") . ", " . "<span>" .  date_format($start, "g A") . " &ndash; " . date_format($end, "g A") . "</span>";
+    } else {
+        $event_datetime = date_format($start, "F j, Y") . ", " . "<span>" .  date_format($start, "g A") . " &ndash; " . date_format($end, "g A") . "</span>";
+    }
 
     ?>
         <a class="cah-event-item" href=<?= $link ?>>
@@ -79,40 +83,6 @@ function event_item_template($event) {
         </a>
 
     <?
-}
-
-// Properly formats category tags for printing.
-function parse_event_category($tags) {
-    $categories = array("Gallery", "Music", "SVAD", "Theatre");
-
-    if (strtolower($tags[0]) == "music") {
-        return "$categories[1]";
-    } else if (strtolower($tags[0]) == "theatre ucf") {
-        return $categories[3];
-    } else {
-        // It'll be SVAD. Seems like "art gallery" always goes with SVAD.
-        // This else statement depends on "art gallery" always being a tag with SVAD.
-        // !WARNING: This might not be true in the future. I'm just too lazy to future-proof this.
-
-        // Checks for "art gallery" tag.
-        $gallery = false;
-        
-        // If statement only needed to remove warning about providing an invalid input, since PHP wants you to check for empty arrays before looping them.
-        if (!empty($tags)) {
-            foreach ($tags as $tag1) {
-                if (strtolower($tag1) == "art gallery") {
-                    $gallery = true;
-                }
-            }
-        }
-
-        if ($gallery === true) {
-            return $categories[0] . ", " . $categories[2];
-        } else {
-            return $categories[2];
-        }
-    }
-    
 }
 
 ?>

@@ -18,6 +18,7 @@ global $num_total_events;
 global $num_of_pages;
 global $hide_recurrence;
 global $dev;
+global $filter;
 
 function events_handler($atts = []) {
     // Attributes given in the shortcode call in Wordpress
@@ -32,11 +33,12 @@ function events_handler($atts = []) {
     $hide_recurrence = $attributes['hide-recurrence'];
     $GLOBALS['hide_recurrence'] = $hide_recurrence;
     $filter = $attributes['filter'];
+    $GLOBALS['filter'] = strtolower($filter);
     $format = $attributes['format'];
     $num_events_to_show = $attributes['num-events'];
 
-    // Allows changes to dev site without affecting other live sites.
-    $GLOBALS['dev'] = $attributes['dev'];
+    // // Allows changes to dev site without affecting other live sites.
+    // $GLOBALS['dev'] = $attributes['dev'];
 
     // Flag for no events in a month.
     // !WARNING: Not sure if this is needed, it's not in global scope.
@@ -129,7 +131,48 @@ function events_handler($atts = []) {
     }
 }
 
-// Function to index all events into an array for pagnination. This indexing function can possibly be merged with total_number_of_months();
+// Parses each category from event tags for each event.
+function parse_event_category($tags) {
+    $categories = array("Gallery", "Music", "SVAD", "Theatre");
+
+    if (strtolower($tags[0]) == "music") {
+        return "$categories[1]";
+    } else if (strtolower($tags[0]) == "theatre ucf") {
+        return $categories[3];
+    } else {
+        // Checks for "art gallery" or any tags containing that string.
+        $gallery = false;
+
+        // Same thing, but for SVAD.
+        $svad = false;
+        
+        // If statement only needed to remove warning about providing an invalid input, since PHP wants you to check for empty arrays before looping them.
+        if (!empty($tags)) {
+            foreach ($tags as $tag1) {
+                // Normalize the tag to lowercase.
+                $tag = strtolower($tag1);
+
+                if (strpos($tag, "art gallery") !== false) {
+                    $gallery = true;
+                }
+
+                if (strpos($tag, "svad") !== false || strpos($tag, "visual arts")) {
+                    $svad = true;
+                }
+            }
+        }
+
+        if ($gallery === true && $svad === true) {
+            return $categories[0] . ", " . $categories[2];
+        } else if ($gallery === true) {
+            return $categories[0];
+        } else if ($svad === true) {
+            return $categories[2];
+        }
+    }
+}
+
+// Indexes all events into an array for pagnination. This indexing function can possibly be merged with total_number_of_months();
 // TODO: Add consideration for current active category.
 function index_events() {
     $events = array();
@@ -166,7 +209,7 @@ function index_events() {
             $end = strtotime($event->ends);
 
             // The actual tag from the JSON file.
-            $category = parse_event_category($event->tags);
+            $category = strtolower(parse_event_category($event->tags));
             
             // Ensures that the events are active or upcoming:
             if ($end >= time()) {
@@ -176,9 +219,11 @@ function index_events() {
                     if ($i > 0 && $hide_recurrence && $previous_id !== $event->event_id) {
                     } else {
                         $previous_id = $events->event_id;
+                        $event->parsed_category = $category;
                         array_push($events, $event);
                     }
                 } else if (strpos($activeCat, $category) !== FALSE) {
+                    $event->parsed_category = $category;
                     array_push($events, $event);
                 }
             }
@@ -206,30 +251,32 @@ function parsed_events_index() {
             $original_events_array[$i]->starts = date_create($original_events_array[$i]->starts);
             $original_events_array[$i]->ends = date_create($original_events_array[$i]->ends);
 
-            if ($i === 0) {
-                array_push($parsed_events_array, $original_events_array[$i]);
-
-                $previous_event_id = $original_events_array[$i]->event_id;
-            } else {
-                $current_event_id = $original_events_array[$i]->event_id;
-                    
-                if ($previous_event_id !== $current_event_id) {
-                    if ($day_range > 0) {
-                        $last_parsed = count($parsed_events_array) - 1;
-    
-                        $parsed_events_array[$last_parsed]->day_range = $day_range;
-
-                        $day_range = 0;
-                    }
-
-                    $original_events_array[$i]->day_range = 0;
-                    
+            if ($GLOBALS['filter'] == $original_events_array[$i]->parsed_category || $GLOBALS['filter'] == "all") {
+                if ($i === 0) {
                     array_push($parsed_events_array, $original_events_array[$i]);
-                        
-                    $previous_event_id = $current_event_id;
+    
+                    $previous_event_id = $original_events_array[$i]->event_id;
                 } else {
-                    $day_range++;
-                    }
+                    $current_event_id = $original_events_array[$i]->event_id;
+                        
+                    if ($previous_event_id !== $current_event_id) {
+                        if ($day_range > 0) {
+                            $last_parsed = count($parsed_events_array) - 1;
+        
+                            $parsed_events_array[$last_parsed]->day_range = $day_range;
+    
+                            $day_range = 0;
+                        }
+    
+                        $original_events_array[$i]->day_range = 0;
+                        
+                        array_push($parsed_events_array, $original_events_array[$i]);
+                            
+                        $previous_event_id = $current_event_id;
+                    } else {
+                        $day_range++;
+                        }
+                }
             }
         }
     
