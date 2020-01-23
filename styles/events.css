@@ -23,8 +23,11 @@ a.cah-event-item {
         margin-left: -1.2em;
         padding: 1.2em;
     }
-        .cah-event-item li:hover {
-            background-color:rgb(243, 243, 243);
+        .cah-event-item-light:hover {
+            background-color:rgba(243, 243, 243, 0.9);
+        }
+        .cah-event-item-dark:hover {
+            background-color:rgba(243, 243, 243, 0.1);
         }
 
 .cah-event-filter-button {

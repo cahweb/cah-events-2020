@@ -51,6 +51,7 @@ function events_handler($atts = []) {
         0 - (Default) Item list side bar
         1 - Drop down menu
         2 - No filter shown
+        3 - With custom background for front page, with 'more events' button.
 
         NOTE: Could probably merge this with all of the event child functions, but that's for future you or me. DRY means nothing to me lol.
     */
@@ -96,6 +97,33 @@ function events_handler($atts = []) {
                             ?>
                         </ul>
                     </section>
+                </div>
+            </div>
+            <?
+            return ob_get_clean();
+        case 3:
+            // To access background image.
+            // Had to do it this way because I didn't want to redo the CSS file as a PHP.
+            $bg_img = plugin_dir_url(__DIR__, 1) . "imgs/knight.jpg";
+
+            ob_start();
+            ?>
+            <div class="p-5" style="background-image: url('<?= $bg_img ?>'); background-repeat: no-repeat; background-size: cover;">
+                <div class="container">
+                    <h1 class="text-inverse mb-4">Events</h1>
+
+                    <div class="d-flex flex-column">
+                        <div class="mx-auto">
+                            <? // Events ?>
+                            <section class="mt-0 col-9">
+                                <ul class="list-unstyled">
+                                    <?
+                                        print_handler($format, $filter, $num_events_to_show);
+                                    ?>
+                                </ul>
+                            </section>
+                        </div>
+                    </div>
                 </div>
             </div>
             <?

@@ -26,7 +26,7 @@ function print_handler($format, $filter, $number_events_to_show) {
         // Prints all events in a category only for format 2.
         if ($format == 2 && $filter !== '') {
             for ($i = 0; $i < $number_events_to_show; $i++) {
-                event_item_template($events[$i]);
+                event_item_template($events[$i], $format);
             }
         } else {
             // Pagination
@@ -42,7 +42,7 @@ function print_handler($format, $filter, $number_events_to_show) {
                     // Out of bounds conditional.
                     break;
                 } else {
-                    event_item_template($events[$i]);
+                    event_item_template($events[$i], $format);
                 }
             }
         }
@@ -51,7 +51,7 @@ function print_handler($format, $filter, $number_events_to_show) {
 }
 
 // Handles individual event's html. Description length is shorted to 300 characters.
-function event_item_template($event) {
+function event_item_template($event, $format) {
     $link = $event->url;
     $start = $event->starts;
     $end = $event->ends;
@@ -68,17 +68,30 @@ function event_item_template($event) {
     } else {
         $event_datetime = date_format($start, "F j, Y") . ", " . "<span>" .  date_format($start, "g A") . " &ndash; " . date_format($end, "g A") . "</span>";
     }
+    
+    // For format 3, which has a dark background.
+    if ($format == 3) {
+        $title_color = "text-inverse";
+        $desc_color = "";
+        $desc_color_3 = "color: #999;";
+        $li_mode = "dark";
+    } else {
+        $title_color = "text-secondary";
+        $desc_color = "text-muted";
+        $desc_color_3 = "";
+        $li_mode = "light";
+    }
 
     ?>
         <a class="cah-event-item" href=<?= $link ?>>
-            <li class="cah-event-item">
+            <li class="cah-event-item-<?= $li_mode ?>">
                 <p name="date-range" class="h5 text-primary cah-event-item-date">
                     <?= $event_datetime ?>
                 </p>
 
-                <p name="title" class="h5 text-secondary"><?= $title ?></p>
+                <p name="title" class="h5 <?= $title_color ?>"><?= $title ?></p>
         
-                <p name="description" class="text-muted mb-0"><?= strlen($description) > 300 ? strip_tags(substr($description, 0, 300) . " . . . ") : strip_tags($description) ?></p>
+                <p name="description" class="mb-0 <?= $desc_color ?>" style="<?= $desc_color_3 ?>"><?= strlen($description) > 300 ? strip_tags(substr($description, 0, 300) . " . . . ") : strip_tags($description) ?></p>
             </li>
         </a>
 
