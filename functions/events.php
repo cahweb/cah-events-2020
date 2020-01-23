@@ -83,7 +83,6 @@ function events_handler($atts = []) {
             </div>
             <?
             return ob_get_clean();
-            break;
         case 2:
             ob_start();
             ?>
@@ -101,7 +100,6 @@ function events_handler($atts = []) {
             </div>
             <?
             return ob_get_clean();
-            break;
         default:
             ob_start();
             ?>
