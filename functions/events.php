@@ -108,21 +108,25 @@ function events_handler($atts = []) {
 
             ob_start();
             ?>
-            <div class="p-5" style="background-image: url('<?= $bg_img ?>'); background-repeat: no-repeat; background-size: cover;">
-                <div class="container">
-                    <h1 class="text-inverse mb-4">Events</h1>
+            <div class="" style="background-image: url('<?= $bg_img ?>'); background-repeat: no-repeat; background-size: cover; margin-left: -5%;">
+                <div class="py-5 pl-5 pr-4" style="margin-left: 5%;">
+                    <div class="container">
+                        <h1 class="text-inverse mb-4">Events</h1>
 
-                    <div class="d-flex flex-column">
-                        <div class="mx-auto">
-                            <? // Events ?>
-                            <section class="mt-0 col-9">
-                                <ul class="list-unstyled">
-                                    <?
-                                        print_handler($format, $filter, $num_events_to_show);
-                                    ?>
-                                </ul>
-                            </section>
+                        <div class="d-flex flex-column">
+                            <div class="mx-auto">
+                                <? // Events ?>
+                                <section class="mt-0 col-lg-8 p-0">
+                                    <ul class="list-unstyled">
+                                        <?
+                                            print_handler($format, $filter, $num_events_to_show);
+                                        ?>
+                                    </ul>
+                                </section>
+                            </div>
                         </div>
+
+                        <a href="https://events.ucf.edu/calendar/3611/cah-events/upcoming/" class="btn btn-primary mt-3">More Events</a>
                     </div>
                 </div>
             </div>
