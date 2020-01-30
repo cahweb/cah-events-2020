@@ -26,24 +26,90 @@ function events_handler($atts = []) {
         'dev' => false,
         'hide-recurrence' => false,
         'filter' => '',
+        'btn-format' => '',
         'format' => 0,
         'num-events' => 5,
     ], $atts);
 
     $hide_recurrence = $attributes['hide-recurrence'];
     $GLOBALS['hide_recurrence'] = $hide_recurrence;
-    $filter = $attributes['filter'];
-    $GLOBALS['filter'] = strtolower($filter);
+
+    $filter = strtolower($attributes['filter']);
+    $GLOBALS['filter'] = $filter;
+
+    $btn_format = strtolower($attributes['btn-format']);
+
     $format = $attributes['format'];
+
     $num_events_to_show = $attributes['num-events'];
 
-    // // Allows changes to dev site without affecting other live sites.
-    // $GLOBALS['dev'] = $attributes['dev'];
+    // Allows changes to dev site without affecting other live sites.
+    $dev = strtolower($attributes['dev']);
+    $GLOBALS['dev'] = $dev;
 
     // Flag for no events in a month.
     // !WARNING: Not sure if this is needed, it's not in global scope.
     global $isEmpty;
     $isEmpty = FALSE;
+
+    if ($dev) {
+        if ($filter == "list") {
+            $div_class = "row mx-0";
+            $filter_class = "col-sm-3 my-3";
+            $events_class = "col-sm-9 mt-0";
+            
+            // Specified in events_filter.php.
+            $format = 0;
+        } else {
+            $div_class = "d-flex flex-column";
+            $filter_class = "col-sm-5 mb-5 mx-auto";
+            $events_class = "mt-0";
+            
+            // Specified in events_filter.php.
+            if ($filter == "dropdown" || $filter == "drop-down") {
+                $format = 1;
+            } else {
+                $format = 2;
+            }
+        }
+
+        ob_start();
+        ?>
+
+            <div class="<?= $div_class ?>">
+                <? // Filters ?>
+                <section class="<?= $filter_class ?>">
+                    <?
+                        filter_handler($format)
+                    ?>
+                </section>
+
+                <? // Events ?>
+                <section class="<?= $events_class ?>">
+                    <ul class="list-unstyled">
+                        <?
+                            print_handler($format, $filter, $num_events_to_show);
+                        ?>
+                    </ul>
+
+                    <?
+                        if ($btn_format == "show-more-btn" || $btn_format == "show-more" || $btn_format == "showmore") {
+                            ?>
+                                <div class="d-flex">
+                                    <a href="https://events.ucf.edu/calendar/3611/cah-events/upcoming/" class="btn btn-primary mt-3 mx-auto">More Events</a>
+                                </div>
+                            <?
+                        } else if ($btn_format == "pagination" || $btn_format == "paged") {
+                            events_pagination($num_events_to_show);
+                        }
+                    ?>
+                </section>
+
+            </div>
+
+        <?
+        return ob_get_clean();
+    }
 
     /*
         Format is given by the Wordpress shortcode attribute "format".
