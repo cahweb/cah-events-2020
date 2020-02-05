@@ -273,6 +273,7 @@ function parse_event_category($tags) {
 function index_events() {
     $events = array();
 
+    // These end up as identical DateTime objects. Why not just use one? - M.L. (31 JAN 2020 13:47)
     $current_year = date_create('Y');
     $current_month = date_create('m');
 
@@ -294,7 +295,23 @@ function index_events() {
                 $current_year->modify("+1 year");
             }
             
-            $current_month->modify("+1 month");
+            // On days past 30 January, this was breaking and not showing February's events.
+            // It seems the "+1 month" interval (I tried both with DateTime::modify() and 
+            // with DateTime::add()) tries to give you the same date in the following month,
+            // but will just roll over into the next month if you ask for a date beyond that
+            // one. I tested it with 31 AUG +1 month, as well, and it gave me 1 OCT, so it's
+            // not just February that's weird, in this particular use case.
+            //
+            // I figured the easiest fix would be to just increment the month and create a
+            // new DateTime object, but you may be able to think of a less clunky solution.
+            //      - M.L. (31 JAN 2020 13:56)
+
+            // This just for readability's sake
+            $Y = date_format( $current_month, 'Y' );
+            $m = date_format( $current_month, 'm' ) + 1;
+            $d = date_format( $current_month, 'd' ) >= 28 ? 28 : date_format( $current_month, 'd' );
+
+            $current_month = date_create_from_format( 'Y-m-d', "$Y-$m-$d" );
         }
 
         // Not DRY, I know.
@@ -314,7 +331,7 @@ function index_events() {
                 if ($activeCat == "All" || $activeCat == "") {
                     if ($i > 0 && $hide_recurrence && $previous_id !== $event->event_id) {
                     } else {
-                        $previous_id = $events->event_id;
+                        $previous_id = $event->event_id;
                         $event->parsed_category = $category;
                         array_push($events, $event);
                     }
