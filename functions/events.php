@@ -18,6 +18,7 @@ global $num_total_events;
 global $num_of_pages;
 global $hide_recurrence;
 global $dev;
+global $filter;
 
 function events_handler($atts = []) {
     // Attributes given in the shortcode call in Wordpress
@@ -31,7 +32,10 @@ function events_handler($atts = []) {
 
     $hide_recurrence = $attributes['hide-recurrence'];
     $GLOBALS['hide_recurrence'] = $hide_recurrence;
+
     $filter = $attributes['filter'];
+    $GLOBALS['filter'] = strtolower($filter);
+    
     $format = $attributes['format'];
     $num_events_to_show = $attributes['num-events'];
 
