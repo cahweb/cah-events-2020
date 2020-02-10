@@ -93,15 +93,15 @@ function parse_event_category($tags) {
         
         // If statement only needed to remove warning about providing an invalid input, since PHP wants you to check for empty arrays before looping them.
         if (!empty($tags)) {
-            foreach ($tags as $tag1) {
-                if (strtolower($tag1) == "art gallery") {
+            foreach ($tags as $tag) {
+                if (strpos(strtolower($tag), "gallery") !== false) {
                     $gallery = true;
                 }
             }
         }
 
         if ($gallery === true) {
-            return $categories[0] . ", " . $categories[2];
+            return $categories[0];
         } else {
             return $categories[2];
         }
