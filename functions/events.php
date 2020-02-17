@@ -58,15 +58,21 @@ function events_handler($atts = []) {
 
     if ($GLOBALS['dev']) {
         // Changes layout styles depending on which filter_format is chosen.
-        // if ($filter_format == "list") {
-        //     spaced("LIST");
-        // } else if ($filter_format == "dropdown") {
-        //     spaced("DROPDOWN");
-        // } else {
-        //     spaced("NONE");
-        //     $filter_format = "";
-        // }
+        if ($filter_format == "list") {
+            $styles = "";
+            $container_classes = "row";
+            $filter_classes = "col-sm-3 my-3";
+            $events_classes = " col-sm-9";
+        } else {
+            $styles = "";
+            $container_classes = "mx-auto";
+            $filter_classes = "col-sm-5 mb-5 mx-auto";
+            $events_classes = "";
 
+            if ($filter_format == "") {
+                $filter_format = "";
+            }
+        }
 
         ob_start();
 
@@ -101,20 +107,20 @@ function events_handler($atts = []) {
         } else {
             ?>
                 <div class="d-flex flex-column">
-                    <div class="mx-auto">
+                    <div class="<?= $container_classes ?>">
                         <?
                             // Filters
                             if ($filter_format !== "") {
                         ?>
-                            <section class="col-sm-5 mb-5 mx-auto">
+                            <section class="<?= $filter_classes ?>">
                                 <?
-                                    filter_handler($format)
+                                    filter_handler($filter_format)
                                 ?>
                             </section>
                         <? } ?>
 
                         <? // Events ?>
-                        <section class="mt-0">
+                        <section class="mt-0<?= $events_classes ?>">
                             <ul class="list-unstyled">
                                 <?
                                     print_handler($filter, $num_events_to_show);
