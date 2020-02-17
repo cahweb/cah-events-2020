@@ -55,52 +55,86 @@ function events_handler($atts = []) {
 
     if ($GLOBALS['dev']) {
         // Changes layout styles depending on which filter_format is chosen.
-        if ($filter_format == "list") {
-            spaced("LIST");
-        } else if ($filter_format == "dropdown") {
-            spaced("DROPDOWN");
-        } else {
-            spaced("NONE");
-            $filter_format = "";
-        }
+        // if ($filter_format == "list") {
+        //     spaced("LIST");
+        // } else if ($filter_format == "dropdown") {
+        //     spaced("DROPDOWN");
+        // } else {
+        //     spaced("NONE");
+        //     $filter_format = "";
+        // }
+
 
         ob_start();
 
-        ?>
+        // "front" format.
+        if ($filter_format == "front") {
+            // To access background image.
+            // Had to do it this way because I didn't want to redo the CSS file as a PHP.
+            $bg_img = plugin_dir_url(__DIR__, 1) . "imgs/knight.jpg";
 
-            <div class="d-flex flex-column">
-                <div class="mx-auto">
-                    <?
-                        // Filters
-                        if ($filter_format !== "") {
-                    ?>
-                        <section class="col-sm-5 mb-5 mx-auto">
+            ?> 
+                <div class="py-5 pl-5 pr-4" style="background-image: url('<?= $bg_img ?>'); background-repeat: no-repeat; background-size: cover;">
+                    <div class="container">
+                        <h1 class="text-inverse mb-4">Events</h1>
+
+                        <div class="d-flex flex-column">
+                            <div class="mx-auto">
+                                <? // Events ?>
+                                <section class="mt-0 col-lg-9 p-0">
+                                    <ul class="list-unstyled">
+                                        <?
+                                            print_handler($filter, $num_events_to_show);
+                                        ?>
+                                    </ul>
+                                </section>
+                            </div>
+                        </div>
+
+                        <a href="https://events.ucf.edu/calendar/3611/cah-events/upcoming/" class="btn btn-primary mt-3">More Events</a>
+                    </div>
+                </div>
+            <?
+        } else {
+            ?>
+                <div class="d-flex flex-column">
+                    <div class="mx-auto">
+                        <?
+                            // Filters
+                            if ($filter_format !== "") {
+                        ?>
+                            <section class="col-sm-5 mb-5 mx-auto">
+                                <?
+                                    filter_handler($format)
+                                ?>
+                            </section>
+                        <? } ?>
+
+                        <? // Events ?>
+                        <section class="mt-0">
+                            <ul class="list-unstyled">
+                                <?
+                                    print_handler($filter, $num_events_to_show);
+                                ?>
+                            </ul>
+
                             <?
-                                filter_handler($format)
+                                // Button format
+                                if ($btn_format !== "" || $btn_format !== "none") {
+                                    if ($btn_format == "paged" || $btn_format == "pagination") {
+                                        events_pagination($num_events_to_show);
+                                    } else if ($btn_format == "showmore" || $btn_format == "show-more") {
+                                        ?>
+                                            <a href="https://events.ucf.edu/calendar/3611/cah-events/upcoming/" class="btn btn-primary mt-3">More Events</a>
+                                        <?
+                                    }
+                                }
                             ?>
                         </section>
-                    <? } ?>
-
-                    <? // Events ?>
-                    <section class="mt-0">
-                        <ul class="list-unstyled">
-                            <?
-                                print_handler($filter, $num_events_to_show);
-                            ?>
-                        </ul>
-
-                        <?
-                            // Button format
-                            if ($btn_format !== "" || $btn_format !== "none") {
-                                events_pagination($num_events_to_show);
-                            }
-                        ?>
-                    </section>
+                    </div>
                 </div>
-            </div>
-
-        <?
-
+            <?
+        }
         return ob_get_clean();
     }
     
