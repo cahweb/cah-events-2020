@@ -33,6 +33,9 @@ function events_handler($atts = []) {
     ], $atts);
 
     $hide_recurrence = $attributes['hide-recurrence'];
+    if ($hide_recurrence == "false") {
+        $hide_recurrence = "";
+    }
     $GLOBALS['hide_recurrence'] = $hide_recurrence;
 
     $filter = $attributes['filter'];
@@ -316,11 +319,28 @@ function parsed_events_index() {
                     }
             }
         }
-    
-        return $parsed_events_array;
     } else {
-        return $original_events_array;
+        foreach ($original_events_array as $event) {
+            // The actual tag from the JSON file.
+            $category = parse_event_category($event->tags);
+
+            // Converts start and ending date and times to datetime format for easier parsing.
+            $event->starts = date_create($event->starts);
+            $event->ends = date_create($event->ends);
+
+            // If no specific filter is given.
+            if ($activeCat == "All" || $activeCat == "") {
+                array_push($parsed_events_array, $event);
+            }
+            
+            // Pushes each event into an array depending on which category is currently active.
+            if (strpos($activeCat, $category) !== false) {
+                    array_push($parsed_events_array, $event);
+            }
+        }
     }
+
+    return $parsed_events_array;
 }
 
 ?>
