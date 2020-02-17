@@ -231,25 +231,41 @@ function events_handler($atts = []) {
 function index_events() {
     $events = array();
 
-    $path = "https://events.ucf.edu/calendar/4310/arts-at-ucf/upcoming/feed.json";
+    $current_year = date_create('Y');
+    $current_month = date_create('m');
+
+    // Tracks if this is the initial loop where date looping would not apply.
+    $i = 0;
+
+    $path = "https://events.ucf.edu/calendar/4310/arts-at-ucf/";
     
     // Initializes the conditional below. It's repeated again to output the correct path.
-    $events_json_contents = json_decode(file_get_contents($path));
+    $events_json_contents = json_decode(file_get_contents($path . date_format($current_year, 'Y') . "/" . date_format($current_month, 'n') . "/" . "feed.json"));
 
     while (!empty($events_json_contents)) {
+        // Loop around to next year if the current month is December and the loop as already gone through once.
+        if ($i > 0) {
+            if (date_format($current_month, 'n') == 12) {
+                $current_year->modify("+1 year");
+            }
+            
+            $current_month->modify("+1 month");
+        }
+
+        // Not DRY, I know.
+        $events_json_contents = json_decode(file_get_contents($path . date_format($current_year, 'Y') . "/" . date_format($current_month, 'n') . "/" . "feed.json"));
+
         foreach ($events_json_contents as $event) {
             // The date/time when each event ends.
             $end = strtotime($event->ends);
-
-            // The actual tag from the JSON file.
-            $category = parse_event_category($event->tags);
             
             // Ensures that the events are active or upcoming:
             if ($end >= time()) {
                 array_push($events, $event);
-                test123();
             }
         }
+
+        $i++;
     }
 
     return $events;
@@ -260,6 +276,9 @@ function parsed_events_index() {
     $original_events_array = index_events();
     $num_of_events = count($original_events_array);
     $parsed_events_array = array();
+
+    // For ease of typing.
+    $activeCat = $GLOBALS['activeCat'];
 
     if ($GLOBALS['hide_recurrence']) {
         // To keep track of the previous event id in the array.
