@@ -228,37 +228,15 @@ function events_handler($atts = []) {
 }
 
 // Function to index all events into an array for pagnination. This indexing function can possibly be merged with total_number_of_months();
-// TODO: Add consideration for current active category.
 function index_events() {
     $events = array();
 
-    $current_year = date_create('Y');
-    $current_month = date_create('m');
-
-    // For ease of typing.
-    $activeCat = $GLOBALS['activeCat'];
-
-    // Tracks if this is the initial loop where date looping would not apply.
-    $i = 0;
-
-    $path = "https://events.ucf.edu/calendar/4310/arts-at-ucf/";
+    $path = "https://events.ucf.edu/calendar/4310/arts-at-ucf/upcoming/feed.json";
     
     // Initializes the conditional below. It's repeated again to output the correct path.
-    $events_json_contents = json_decode(file_get_contents($path . date_format($current_year, 'Y') . "/" . date_format($current_month, 'n') . "/" . "feed.json"));
+    $events_json_contents = json_decode(file_get_contents($path));
 
     while (!empty($events_json_contents)) {
-        // Loop around to next year if the current month is December and the loop as already gone through once.
-        if ($i > 0) {
-            if (date_format($current_month, 'n') == 12) {
-                $current_year->modify("+1 year");
-            }
-            
-            $current_month->modify("+1 month");
-        }
-
-        // Not DRY, I know.
-        $events_json_contents = json_decode(file_get_contents($path . date_format($current_year, 'Y') . "/" . date_format($current_month, 'n') . "/" . "feed.json"));
-
         foreach ($events_json_contents as $event) {
             // The date/time when each event ends.
             $end = strtotime($event->ends);
@@ -268,21 +246,10 @@ function index_events() {
             
             // Ensures that the events are active or upcoming:
             if ($end >= time()) {
-                // Pushes each event into an array depending on which category is currently active.
-                // Added comparison to empty string for format 2 for filters.
-                if ($activeCat == "All" || $activeCat == "") {
-                    if ($i > 0 && $hide_recurrence && $previous_id !== $event->event_id) {
-                    } else {
-                        $previous_id = $events->event_id;
-                        array_push($events, $event);
-                    }
-                } else if (strpos($activeCat, $category) !== FALSE) {
-                    array_push($events, $event);
-                }
+                array_push($events, $event);
+                test123();
             }
         }
-
-        $i++;
     }
 
     return $events;
