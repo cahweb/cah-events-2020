@@ -4,7 +4,7 @@
     Specifically, for printing events.
 */
 
-function print_handler($format, $filter, $number_events_to_show) {
+function print_handler($filter, $number_events_to_show) {
     $events = parsed_events_index();
     $num_of_events = count($events);
     $page_number = page_number();

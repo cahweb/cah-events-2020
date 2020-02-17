@@ -27,6 +27,8 @@ function events_handler($atts = []) {
         'hide-recurrence' => false,
         'filter' => '',
         'format' => 0,
+        'filter-format' => '',
+        'btn-format' => '',
         'num-events' => 5,
     ], $atts);
 
@@ -39,6 +41,10 @@ function events_handler($atts = []) {
     $format = $attributes['format'];
     $num_events_to_show = $attributes['num-events'];
 
+    $filter_format = strtolower($attributes['filter-format']);
+
+    $btn_format = strtolower($attributes['btn-format']);
+
     // Allows changes to dev site without affecting other live sites.
     $GLOBALS['dev'] = $attributes['dev'];
 
@@ -47,90 +53,144 @@ function events_handler($atts = []) {
     global $isEmpty;
     $isEmpty = FALSE;
 
-    /*
-        Format is given by the Wordpress shortcode attribute "format".
+    if ($GLOBALS['dev']) {
+        // Changes layout styles depending on which filter_format is chosen.
+        if ($filter_format == "list") {
+            spaced("LIST");
+        } else if ($filter_format == "dropdown") {
+            spaced("DROPDOWN");
+        } else {
+            spaced("NONE");
+            $filter_format = "";
+        }
 
-        0 - (Default) Item list side bar
-        1 - Drop down menu
-        2 - No filter shown
+        ob_start();
 
-        NOTE: Could probably merge this with all of the event child functions, but that's for future you or me. DRY means nothing to me lol.
-    */
-    switch ($format) {
-        case 1:
-            ob_start();
-            ?>
+        ?>
+
             <div class="d-flex flex-column">
                 <div class="mx-auto">
-                    <? // Filters ?>
-                    <section class="col-sm-5 mb-5 mx-auto">
-                        <?
-                            filter_handler($format)
-                        ?>
-                    </section>
+                    <?
+                        // Filters
+                        if ($filter_format !== "") {
+                    ?>
+                        <section class="col-sm-5 mb-5 mx-auto">
+                            <?
+                                filter_handler($format)
+                            ?>
+                        </section>
+                    <? } ?>
 
                     <? // Events ?>
                     <section class="mt-0">
                         <ul class="list-unstyled">
                             <?
-                                print_handler($format, $filter, $num_events_to_show);
+                                print_handler($filter, $num_events_to_show);
                             ?>
                         </ul>
 
+                        <?
+                            // Button format
+                            if ($btn_format !== "" || $btn_format !== "none") {
+                                events_pagination($num_events_to_show);
+                            }
+                        ?>
+                    </section>
+                </div>
+            </div>
+
+        <?
+
+        return ob_get_clean();
+    }
+    
+    else {    
+        /*
+            Format is given by the Wordpress shortcode attribute "format".
+    
+            0 - (Default) Item list side bar
+            1 - Drop down menu
+            2 - No filter shown
+    
+            NOTE: Could probably merge this with all of the event child functions, but that's for future you or me. DRY means nothing to me lol.
+        */
+        switch ($format) {
+            case 1:
+                ob_start();
+                ?>
+                <div class="d-flex flex-column">
+                    <div class="mx-auto">
+                        <? // Filters ?>
+                        <section class="col-sm-5 mb-5 mx-auto">
+                            <?
+                                filter_handler($format)
+                            ?>
+                        </section>
+    
+                        <? // Events ?>
+                        <section class="mt-0">
+                            <ul class="list-unstyled">
+                                <?
+                                    print_handler($format, $filter, $num_events_to_show);
+                                ?>
+                            </ul>
+    
+                            <?
+                                events_pagination($num_events_to_show);
+                            ?>
+                        </section>
+                    </div>
+                </div>
+                <?
+                return ob_get_clean();
+                break;
+            case 2:
+                ob_start();
+                ?>
+                <div class="d-flex flex-column">
+                    <div class="mx-auto">
+                        <? // Events ?>
+                        <section class="mt-0">
+                            <ul class="list-unstyled">
+                                <?
+                                    print_handler($format, $filter, $num_events_to_show);
+                                ?>
+                            </ul>
+                        </section>
+                    </div>
+                </div>
+                <?
+                return ob_get_clean();
+                break;
+            default:
+                ob_start();
+                ?>
+                <div class="row">
+                    <? // Filters ?>
+                    <section class="col-sm-3 my-3">
+                        <?
+                            filter_handler($format)
+                        ?>
+                    </section>
+    
+                    <? // Events ?>
+                    <section class="col-sm-9 mt-0">
+                        <ul class="list-unstyled">
+                            <?
+                                print_handler($format, $filter, $num_events_to_show);
+                            ?>
+                        </ul>
+    
                         <?
                             events_pagination($num_events_to_show);
                         ?>
                     </section>
                 </div>
-            </div>
-            <?
-            return ob_get_clean();
-            break;
-        case 2:
-            ob_start();
-            ?>
-            <div class="d-flex flex-column">
-                <div class="mx-auto">
-                    <? // Events ?>
-                    <section class="mt-0">
-                        <ul class="list-unstyled">
-                            <?
-                                print_handler($format, $filter, $num_events_to_show);
-                            ?>
-                        </ul>
-                    </section>
-                </div>
-            </div>
-            <?
-            return ob_get_clean();
-            break;
-        default:
-            ob_start();
-            ?>
-            <div class="row">
-                <? // Filters ?>
-                <section class="col-sm-3 my-3">
-                    <?
-                        filter_handler($format)
-                    ?>
-                </section>
-
-                <? // Events ?>
-                <section class="col-sm-9 mt-0">
-                    <ul class="list-unstyled">
-                        <?
-                            print_handler($format, $filter, $num_events_to_show);
-                        ?>
-                    </ul>
-
-                    <?
-                        events_pagination($num_events_to_show);
-                    ?>
-                </section>
-            </div>
-            <?
-            return ob_get_clean();
+                <?
+                return ob_get_clean();
+        }
     }
+
 }
 
 // Function to index all events into an array for pagnination. This indexing function can possibly be merged with total_number_of_months();

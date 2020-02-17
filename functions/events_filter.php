@@ -50,15 +50,28 @@ function filter_handler($format) {
               empty string also counts as 'ALL' for active category.
     */
 
-    switch ($format) {
-        case 1:
-            form_format_dropdown();
-            break;
-        case 2:
-            break;
-        default:
-            form_format_list();
-            break;
+    if ($GLOBALS['dev']) {
+        switch ($format) {
+            case "dropdown":
+                form_format_dropdown();
+                break;
+            case "list":
+                form_format_list();
+                break;
+            default:
+                break;
+        }
+    } else {
+        switch ($format) {
+            case 1:
+                form_format_dropdown();
+                break;
+            case 2:
+                break;
+            default:
+                form_format_list();
+                break;
+        }
     }
 }
 
