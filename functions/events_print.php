@@ -4,11 +4,12 @@
     Specifically, for printing events.
 */
 
-function print_handler($format, $filter, $number_events_to_show) {
+function print_handler($filter, $number_events_to_show) {
     $events = parsed_events_index();
     $num_of_events = count($events);
     $page_number = page_number();
 
+    
     // Where there is no filter set, so display all events.
     if ($filter === '' || strcasecmp($filter, "all") === 0) {
         $filter = '';
@@ -19,31 +20,20 @@ function print_handler($format, $filter, $number_events_to_show) {
             <p class="text-center text-muted my-5"><em>There are currently no active or upcoming events listed.</em></p>
         <?
     } else {
-        if ($num_of_events < $number_events_to_show) {
-            $number_events_to_show = $num_of_events;
-        }
+        // Pagination
+        
+        // Great names, I know. This is just to make writing the for loop simpler.
+        // Includes logic that prints the number of events specified, divided into pages.
+        $x = ($page_number - 1) * $number_events_to_show;
+        $y = $number_events_to_show * $page_number;
 
-        // Prints all events in a category only for format 2.
-        if ($format == 2 && $filter !== '') {
-            for ($i = 0; $i < $number_events_to_show; $i++) {
-                event_item_template($events[$i], $format);
-            }
-        } else {
-            // Pagination
-            
-            // Great names, I know. This is just to make writing the for loop simpler.
-            // Includes logic that prints the number of events specified, divided into pages.
-            $x = ($page_number - 1) * $number_events_to_show;
-            $y = $number_events_to_show * $page_number;
-    
-            for ($i = $x; $i < $y; $i++) {
-                if ($i >= $num_of_events) {
-                    // Break added for the last page, where the number of events might not equal to the amount needed to print.
-                    // Out of bounds conditional.
-                    break;
-                } else {
-                    event_item_template($events[$i], $format);
-                }
+        for ($i = $x; $i < $y; $i++) {
+            if ($i >= $num_of_events) {
+                // Break added for the last page, where the number of events might not equal to the amount needed to print.
+                // Out of bounds conditional.
+                break;
+            } else {
+                event_item_template($events[$i]);
             }
         }
     }
@@ -51,7 +41,7 @@ function print_handler($format, $filter, $number_events_to_show) {
 }
 
 // Handles individual event's html. Description length is shorted to 300 characters.
-function event_item_template($event, $format) {
+function event_item_template($event) {
     $link = $event->url;
     $start = $event->starts;
     $end = $event->ends;
@@ -96,6 +86,40 @@ function event_item_template($event, $format) {
         </a>
 
     <?
+}
+
+// Properly formats category tags for printing.
+function parse_event_category($tags) {
+    $categories = array("Gallery", "Music", "SVAD", "Theatre");
+
+    if (strtolower($tags[0]) == "music") {
+        return "$categories[1]";
+    } else if (strtolower($tags[0]) == "theatre ucf") {
+        return $categories[3];
+    } else {
+        // It'll be SVAD. Seems like "art gallery" always goes with SVAD.
+        // This else statement depends on "art gallery" always being a tag with SVAD.
+        // !WARNING: This might not be true in the future. I'm just too lazy to future-proof this.
+
+        // Checks for "art gallery" tag.
+        $gallery = false;
+        
+        // If statement only needed to remove warning about providing an invalid input, since PHP wants you to check for empty arrays before looping them.
+        if (!empty($tags)) {
+            foreach ($tags as $tag) {
+                if (strpos(strtolower($tag), "gallery") !== false) {
+                    $gallery = true;
+                }
+            }
+        }
+
+        if ($gallery === true) {
+            return $categories[0];
+        } else {
+            return $categories[2];
+        }
+    }
+    
 }
 
 ?>
