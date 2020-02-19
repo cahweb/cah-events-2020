@@ -244,14 +244,13 @@ function parsed_events_index() {
             $event->starts = date_create($event->starts);
             $event->ends = date_create($event->ends);
 
-            // If no specific filter is given.
+            
+            // If no specific filter is given, just pushes same object but with converted dates to new array.
             if ($activeCat == "All" || $activeCat == "") {
                 array_push($parsed_events_array, $event);
-            }
-            
-            // Pushes each event into an array depending on which category is currently active.
-            if (strpos($activeCat, $category) !== false) {
-                    array_push($parsed_events_array, $event);
+            } else if (strpos($activeCat, $category) !== false) {
+                // Pushes each event into an array depending on which category is currently active.
+                array_push($parsed_events_array, $event);
             }
         }
     }
