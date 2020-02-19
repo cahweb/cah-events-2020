@@ -39,39 +39,15 @@ function filter_handler($format) {
     // Primes global variables.
     parse_categories();
 
-    /*
-        Format is given by the Wordpress shortcode attribute "format".
-
-        0 - (Default) Item list side bar
-        1 - Drop down menu
-        2 - No filter shown
-
-        NOTE: 2 does not need a dedicated function nor case as comparison to an
-              empty string also counts as 'ALL' for active category.
-    */
-
-    if ($GLOBALS['dev']) {
-        switch ($format) {
-            case "dropdown":
-                form_format_dropdown();
-                break;
-            case "list":
-                form_format_list();
-                break;
-            default:
-                break;
-        }
-    } else {
-        switch ($format) {
-            case 1:
-                form_format_dropdown();
-                break;
-            case 2:
-                break;
-            default:
-                form_format_list();
-                break;
-        }
+    switch ($format) {
+        case "dropdown":
+            form_format_dropdown();
+            break;
+        case "list":
+            form_format_list();
+            break;
+        default:
+            break;
     }
 }
 
