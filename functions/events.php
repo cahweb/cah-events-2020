@@ -136,7 +136,7 @@ function events_handler($atts = []) {
                                     events_pagination($num_events_to_show);
                                 } else if ($btn_format == "showmore" || $btn_format == "show-more") {
                                     ?>
-                                        <a href="https://events.ucf.edu/calendar/3611/cah-events/upcoming/" class="btn btn-primary mt-3">More Events</a>
+                                        <a href="https://events.ucf.edu/calendar/4310/arts-at-ucf/upcoming/" class="btn btn-primary mt-3">More Events</a>
                                     <?
                                 }
                             }
