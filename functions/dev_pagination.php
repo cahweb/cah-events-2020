@@ -39,7 +39,7 @@ function dev_pagination_handler($atts = []) {
                 <a class="cah-event-item" v-bind:href="event.url">
                     <li class="cah-event-item-light">
                         <p name="date-range" class="h5 text-primary cah-event-item-date">
-                            {{ event.starts }} - {{ event.occurrences }}
+                            {{ printDate(event) }}
                         </p>
 
                         <p name="title" class="h5 text-secondary">
@@ -122,8 +122,12 @@ function dev_pagination_handler($atts = []) {
                         d = new Date(d)
 
                         var month = d.toLocaleDateString('en-US', { month: 'long' })
+                        var day = d.toLocaleDateString('en-US', { day: 'numeric' })
+                        var year = d.toLocaleDateString('en-US', { year: 'numeric' })
 
-                        return event.day_range
+                        var oneDayFormat = month + " " + day + ", " + year
+
+                        return oneDayFormat
                     }
                 }
             })
