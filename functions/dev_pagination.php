@@ -9,8 +9,9 @@ function dev_pagination_handler($atts = []) {
     ], $atts);
 
     $hide_recurrence = $atts['hide-recurrence'];
-    $num_events_to_show = $atts['num-events'];
-
+    // $num_events_to_show = $atts['num-events'];
+    $num_events_to_show = 20;
+    
     test_cont(array(
         test_str_h("hide-recurrence", $hide_recurrence),
         test_str_h("Number of events to show", $num_events_to_show),
@@ -38,7 +39,7 @@ function dev_pagination_handler($atts = []) {
                 <a class="cah-event-item" v-bind:href="event.url">
                     <li class="cah-event-item-light">
                         <p name="date-range" class="h5 text-primary cah-event-item-date">
-                            {{ event.starts }} - {{ event.ends }}
+                            {{ event.starts }} - {{ event.occurrences }}
                         </p>
 
                         <p name="title" class="h5 text-secondary">
@@ -53,8 +54,6 @@ function dev_pagination_handler($atts = []) {
 
         <script src="https://unpkg.com/vue"></script>
         <script>
-            var uniqueIds = []
-
             Vue.component("page-home", {
                 template: "<div>Home component</div>"
             });
@@ -85,6 +84,7 @@ function dev_pagination_handler($atts = []) {
                 },
                 methods : {
                     noRepeats: function (json) {
+                        var uniqueIds = []
                         return json.filter(function (event) {
                             if (uniqueIds.length === 0) {
                                 uniqueIds.push(event.event_id)
@@ -102,7 +102,7 @@ function dev_pagination_handler($atts = []) {
                     printDescription: function(description) {
                         // return description.replace(/<[^>]*>?/gm, '')
                         var str = description.replace(/(\n|<br>|<p>|<\/p>|<span>|<\/span>)/igm, " ").trim()
-                        // str = str.replace(/<a[.*]>|<\/a>/igm, "").trim()
+                        str = str.replace(/<a.*?>|<\/a>|<strong>|<\/strong>/igm, "").trim()
 
                         var strLen = str.length
 
@@ -116,6 +116,14 @@ function dev_pagination_handler($atts = []) {
 
                             return str
                         }
+                    },
+                    printDate: function(event) {
+                        var d = Date.parse(event.ends)
+                        d = new Date(d)
+
+                        var month = d.toLocaleDateString('en-US', { month: 'long' })
+
+                        return event.day_range
                     }
                 }
             })
