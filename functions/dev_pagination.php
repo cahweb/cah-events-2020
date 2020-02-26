@@ -2,7 +2,20 @@
 
 add_shortcode('dev-pagination', 'dev_pagination_handler');
 
-function dev_pagination_handler() {
+function dev_pagination_handler($atts = []) {
+    $attributes = shortcode_atts([
+        'hide-recurrence' => false,
+        'num-events' => 5,
+    ], $atts);
+
+    $hide_recurrence = $atts['hide-recurrence'];
+    $num_events_to_show = $atts['num-events'];
+
+    test_cont(array(
+        test_str_h("hide-recurrence", $hide_recurrence),
+        test_str_h("Number of events to show", $num_events_to_show),
+    ));
+
     ?>
 
         <div id="app" class="demo">
@@ -21,7 +34,7 @@ function dev_pagination_handler() {
         <div id="mess" class="mt-5">
             <h1>This is a mess.</h1>
 
-            <ul v-for="event in noRepeats(json)"  class="list-unstyled">
+            <ul v-for="(event, index) in noRepeats(json)"  v-if="index < <?= $num_events_to_show ?>" class="list-unstyled">
                 <a class="cah-event-item" v-bind:href="event.url">
                     <li class="cah-event-item-light">
                         <p name="date-range" class="h5 text-primary cah-event-item-date">
