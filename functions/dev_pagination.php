@@ -11,10 +11,13 @@ function dev_pagination_handler($atts = []) {
     $hide_recurrence = $atts['hide-recurrence'];
     // $num_events_to_show = $atts['num-events'];
     $num_events_to_show = 20;
+
+    $test = index_unique_end_dates();
     
     test_cont(array(
         test_str_h("hide-recurrence", $hide_recurrence),
         test_str_h("Number of events to show", $num_events_to_show),
+        test_str_h("Array lenght", count($test)),
     ));
 
     ?>
@@ -80,7 +83,7 @@ function dev_pagination_handler($atts = []) {
             new Vue({
                 el: "#mess",
                 data: {
-                    json: <? print json_encode(index_events()) ?>
+                    json: <? print json_encode(index_events()) ?>,
                 },
                 methods : {
                     noRepeats: function(json) {

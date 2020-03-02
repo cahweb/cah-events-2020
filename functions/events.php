@@ -299,4 +299,36 @@ function parsed_events_index() {
     return $parsed_events_array;
 }
 
+// Function to index each unique event and their end dates if they occur multiple times.
+function index_unique_end_dates() {
+    $original_events_array = index_events();
+    $unique_events = array();
+    
+    foreach ($original_events_array as $event) {
+        if (count($unique_events) === 0) {
+            array_push($unique_events, array("event_id"=>$event->event_id, "end_date"=>$event->ends));
+        } else {
+            for ($i = 0; $i < count($unique_events); $i++) {
+                // if ($unique_events[$i]['event_id'] === $event->event_id) {
+                if (in_array($event->event_id, $unique_events[$i])) {
+                    $unique_events[$i]['end_date'] = $event->ends;
+                } else {
+                    
+                }
+            }
+
+            // test_cont(array(
+            //     test_str_h("Unique", $unique_events[$i]['event_id']),
+            //     test_str_h("Event", $event->event_id),
+            //     test_str_h("Same?", $unique_events[$i]['event_id'] === $event->event_id),
+            // ));
+        }
+    }
+    
+    // test123();
+    print_r($unique_events);
+        
+    return $unique_events;
+}
+
 ?>
