@@ -229,6 +229,25 @@ function parsed_events_index() {
             $original_events_array[$i]->starts = date_create($original_events_array[$i]->starts);
             $original_events_array[$i]->ends = date_create($original_events_array[$i]->ends);
 
+            /**
+             * 27 FEB 2020 15:05
+             * Steven told me this afternoon that the events weren't
+             * appearing on the Music and SVAD pages. This seeemed the
+             * most efficient and least disruptive way to get things
+             * working.
+             *                                  - M.L.
+             * 
+             * P.S. - I'm sorry I keep having to barge in and muck about
+             * with your code while you're not here. :\ I want you to
+             * know that I feel bad doing it and try to change as little
+             * as possible, so as to avoid screwing everything up.
+             */
+
+            // The parsed_category attribute wasn't being added to this
+            // set of events. Lowercasing it so it'll match the global
+            // filter. -M.L.
+            $original_events_array[$i]->parsed_category = strtolower(parse_event_category($original_events_array[$i]->tags));
+
             if ($GLOBALS['filter'] == $original_events_array[$i]->parsed_category || $GLOBALS['filter'] == "all") {
                 if ($i === 0) {
                     array_push($parsed_events_array, $original_events_array[$i]);

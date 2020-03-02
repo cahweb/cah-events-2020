@@ -101,8 +101,8 @@ function dev_pagination_handler($atts = []) {
                     },
                     printDescription: function(description) {
                         // return description.replace(/<[^>]*>?/gm, '')
-                        var str = description.replace(/(\n|<br>|<p>|<\/p>|<span>|<\/span>)/igm, " ").trim()
-                        str = str.replace(/<a.*?>|<\/a>|<strong>|<\/strong>/igm, "").trim()
+                        var str = description.replace(/(\n|<br>|<p>|<\/p>|<span>|<\/span>|<li>|<\/li>)/igm, " ").trim()
+                        str = str.replace(/(<a.*?>|<\/a>|<strong>|<\/strong>|<ul>|<\/ul>)/igm, "").trim()
 
                         var strLen = str.length
 
