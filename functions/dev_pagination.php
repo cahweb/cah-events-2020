@@ -39,7 +39,7 @@ function dev_pagination_handler($atts = []) {
                 <a class="cah-event-item" v-bind:href="event.url">
                     <li class="cah-event-item-light">
                         <p name="date-range" class="h5 text-primary cah-event-item-date">
-                            {{ printDate(event) }}
+                            {{ printDate(event) }}, {{ printTime(event.starts) }} &ndash; {{ printTime(event.ends) }} 
                         </p>
 
                         <p name="title" class="h5 text-secondary">
@@ -83,7 +83,7 @@ function dev_pagination_handler($atts = []) {
                     json: <? print json_encode(index_events()) ?>
                 },
                 methods : {
-                    noRepeats: function (json) {
+                    noRepeats: function(json) {
                         var uniqueIds = []
                         return json.filter(function (event) {
                             if (uniqueIds.length === 0) {
@@ -117,17 +117,45 @@ function dev_pagination_handler($atts = []) {
                             return str
                         }
                     },
-                    printDate: function(event) {
-                        var d = Date.parse(event.ends)
+                    printDate: function(date) {
+                        var d = Date.parse(date.starts)
                         d = new Date(d)
 
                         var month = d.toLocaleDateString('en-US', { month: 'long' })
                         var day = d.toLocaleDateString('en-US', { day: 'numeric' })
                         var year = d.toLocaleDateString('en-US', { year: 'numeric' })
-
+                  
                         var oneDayFormat = month + " " + day + ", " + year
 
                         return oneDayFormat
+                    },
+                    printTime: function(time) {
+                        var t = Date.parse(time)
+                        t = new Date(t)
+
+                        var timePeriod, formattedHour, formattedMinutes
+                        var hour = t.getHours()
+                        var minutes = t.getMinutes()
+
+                        if (hour > 12) {
+                            formattedHour = hour - 12
+                            timePeriod = " p.m."
+                        } else {
+                            formattedHour = hour
+                            if (hour === 12) {
+                                timePeriod = " p.m."
+                            } else {
+                                timePeriod = " a.m."
+                            }
+                        }
+
+                        if (minutes === 0) {
+                            formattedMinutes = ""
+                        } else {
+                            formattedMinutes = ":" + minutes;
+                        }
+
+                        return formattedHour + formattedMinutes + timePeriod
                     }
                 }
             })
