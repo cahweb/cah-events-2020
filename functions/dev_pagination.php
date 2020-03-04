@@ -4,19 +4,24 @@ add_shortcode('dev-pagination', 'dev_pagination_handler');
 
 function dev_pagination_handler($atts = []) {
     $attributes = shortcode_atts([
+        'filter' => 'all',
+        'filter-format' => '',
         'hide-recurrence' => false,
         'num-events' => 5,
     ], $atts);
 
+    $filter = $atts['filter'];
+    $filter_format = $atts['filter-format'];
     $hide_recurrence = $atts['hide-recurrence'];
     $hide_recurrence = true;
     // $num_events_to_show = $atts['num-events'];
     $num_events_to_show = 20;
     
     test_cont(array(
-        test_str_h("hide-recurrence", $hide_recurrence),
+        test_str_h("Filter", $filter),
+        test_str_h("Filter format", $filter_format),
+        test_str_h("Hide recurrence", ($hide_recurrence == 1) ? "True" : "False"),
         test_str_h("Number of events to show", $num_events_to_show),
-        test_str_h("Array lenght", count($test)),
     ));
 
     ?>
@@ -109,6 +114,7 @@ function dev_pagination_handler($atts = []) {
                     printDescription: function(description) {
                         // return description.replace(/<[^>]*>?/gm, '')
                         var str = description.replace(/(\n|<br>|<p>|<\/p>|<span>|<\/span>|<li>|<\/li>)/igm, " ").trim()
+                        str = str.replace(/(\s\s+)/igm, " ").trim()
                         str = str.replace(/(<a.*?>|<\/a>|<strong>|<\/strong>|<ul>|<\/ul>)/igm, "").trim()
 
                         var strLen = str.length
