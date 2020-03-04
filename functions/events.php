@@ -299,36 +299,44 @@ function parsed_events_index() {
     return $parsed_events_array;
 }
 
-// Function to index each unique event and their end dates if they occur multiple times.
-function index_unique_end_dates() {
+// Helper function for event_end_dates(). Returns an array of every unique event id.
+function get_unique_event_ids() {
     $original_events_array = index_events();
     $unique_events = array();
+    $unique_event_ids = array();
     
     foreach ($original_events_array as $event) {
-        if (count($unique_events) === 0) {
-            array_push($unique_events, array("event_id"=>$event->event_id, "end_date"=>$event->ends));
+        if (empty($unique_event_ids)) {
+            array_push($unique_event_ids, $event->event_id);
         } else {
-            for ($i = 0; $i < count($unique_events); $i++) {
-                // if ($unique_events[$i]['event_id'] === $event->event_id) {
-                if (in_array($event->event_id, $unique_events[$i])) {
-                    $unique_events[$i]['end_date'] = $event->ends;
-                } else {
-                    
+            foreach ($unique_event_ids as $unique_event_id) {
+                if (!in_array($event->event_id, $unique_event_ids)) {
+                    array_push($unique_event_ids, $event->event_id);
                 }
             }
-
-            // test_cont(array(
-            //     test_str_h("Unique", $unique_events[$i]['event_id']),
-            //     test_str_h("Event", $event->event_id),
-            //     test_str_h("Same?", $unique_events[$i]['event_id'] === $event->event_id),
-            // ));
         }
     }
+
+    return $unique_event_ids;
+}
+
+// Function to index each unique event and their end dates if they occur multiple times.
+function event_end_dates() {
+    $original_events_array = index_events();
+    $unique_event_ids = get_unique_event_ids();
+    $ids_end_dates = array();
     
-    // test123();
-    print_r($unique_events);
-        
-    return $unique_events;
+    if (!empty($unique_event_ids)) {
+        foreach ($original_events_array as $event) {
+            if (in_array($event->event_id, $unique_event_ids)) {
+                array_push($ids_end_dates, array("event_id" => $event->event_id, "end_date" => $event->ends));
+            }
+        }
+    }
+
+    $reversed_ids_end_dates = array_reverse($ids_end_dates);
+
+    return $reversed_ids_end_dates;
 }
 
 ?>
