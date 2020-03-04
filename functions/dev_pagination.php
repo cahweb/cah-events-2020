@@ -41,6 +41,21 @@ function dev_pagination_handler($atts = []) {
 
         <div id="mess" class="mt-5">
             <h1>This is a mess.</h1>
+            <div class="dropdown w-50 my-4 mx-auto">
+                <a class="btn btn-primary dropdown-toggle w-100" href="#" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    {{ getCurrentFilter("<?= $filter ?>", filters) }}
+                </a>
+
+                <div class="dropdown-menu w-100" aria-labelledby="dropdownMenuLink">
+                    <button class="dropdown-item cah-event-filter-button"
+                        v-for="filter in filters"
+                        v-bind:disabled="isCurrentFilter('<?= $filter ?>', filter.value)"
+                        v-bind:value="filter.value"
+                    >
+                        {{ filter.name }}
+                    </button>
+                </div>
+            </div>
 
             <ul v-for="(event, index) in noRepeats(json, <?= $hide_recurrence ?>)"  v-if="index < <?= $num_events_to_show ?>" class="list-unstyled">
                 <a class="cah-event-item" v-bind:href="event.url">
@@ -88,7 +103,15 @@ function dev_pagination_handler($atts = []) {
                 el: "#mess",
                 data: {
                     json: <? print json_encode(index_events()) ?>,
-                    endDateArray: <? print json_encode(event_end_dates()) ?>
+                    endDateArray: <? print json_encode(event_end_dates()) ?>,
+                    currentFilter: "",
+                    filters: [
+                        { name: "All", value: "all" },
+                        { name: "Gallery", value: "gallery" },
+                        { name: "Music", value: "music" },
+                        { name: "SVAD", value: "svad" },
+                        { name: "Theatre", value: "theatre "}
+                    ]
                 },
                 methods : {
                     noRepeats: function(json, hideRecurrence) {
@@ -203,6 +226,20 @@ function dev_pagination_handler($atts = []) {
                         }
 
                         return formattedHour + formattedMinutes + timePeriod
+                    },
+                    isCurrentFilter: function (givenFilter, filter) {
+                        if (givenFilter.toLowerCase().trim() === filter) {
+                            return true;
+                        } else {
+                            return false;
+                        }
+                    },
+                    getCurrentFilter: function (givenFilter, filters) {
+                        for (var i = 0; i < filters.length; i++) {
+                            if (givenFilter.toLowerCase().trim() === filters[i].value) {
+                                return filters[i].name
+                            }
+                        }
                     }
                 }
             })
