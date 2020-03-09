@@ -51,6 +51,7 @@ function dev_pagination_handler($atts = []) {
 
         <div id="mess" class="mt-5">
             <h1>This is a mess.</h1>
+
             <div class="dropdown w-50 my-4 mx-auto">
                 <a v-if="currentFilter === ''" class="btn btn-primary dropdown-toggle w-100" href="#" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     {{ getCurrentFilter("<?= $filter ?>", filters) }}
@@ -68,6 +69,28 @@ function dev_pagination_handler($atts = []) {
                     >
                         {{ filter }}
                     </button>
+                </div>
+            </div>
+
+            <div class="row my-3">
+                <div class="mx-auto">
+                    <nav aria-label="page-navigation">
+                        <ul class="pagination justify-content-center">
+                            <li class="page-item">
+                                <span class="page-link" tabindex="-1">«</span>
+                            </li>
+
+                            <li class="page-item"
+                                v-for="i in numberOfPages(json, eventsPerPage, pagesTotal)"
+                            >
+                                <span class="page-link">{{ i }}</span>
+                            </li>
+
+                            <li class="page-item">
+                                <span class="page-link" >»</span>
+                            </li>
+                        </ul>
+                    </nav>
                 </div>
             </div>
 
@@ -130,7 +153,10 @@ function dev_pagination_handler($atts = []) {
                         "Music",
                         "SVAD",
                         "Theatre",
-                    ]
+                    ],
+                    pagination: true,
+                    pagesTotal: 0,
+                    eventsPerPage: <?= $num_events_to_show ?>,
                 },
                 methods : {
                     noRepeats: function(json, hideRecurrence) {
@@ -281,6 +307,15 @@ function dev_pagination_handler($atts = []) {
                                 return false
                             }
                         }
+                    },
+                    numberOfPages: function(json, numEventsToShow, pagesTotal) {
+                        pagesTotal = Math.ceil(json.length / numEventsToShow)
+
+                        console.log("Total events: " + json.length)
+                        console.log("Number of events to show: " + numEventsToShow)
+                        console.log("Pages needed: " + pagesTotal)
+
+                        return pagesTotal
                     },
                 }
             })
