@@ -11,13 +11,19 @@ function dev_pagination_handler($atts = []) {
     ], $atts);
 
     $filter = $atts['filter'];
-    $filter = "theatre";
+    // Takes into account that an empty string defaults to "all"
+    if (trim($fitler) === "") {
+        $filter = "all";
+    }
+
     $filter_format = $atts['filter-format'];
+
     $hide_recurrence = $atts['hide-recurrence'];
     // Needed for $hide_recurrence to be processed correctly in JavaScript.
     if ($hide_recurrence === false) {
         $hide_recurrence = "false";
     }
+
     // $num_events_to_show = $atts['num-events'];
     $num_events_to_show = 5;
     
