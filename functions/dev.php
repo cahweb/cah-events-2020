@@ -4,28 +4,31 @@
     Developer Functions
     -------------------
 	Used for testing and debugging.
-    Remove when done.
 */
 
 // Displays error messages and saves lives.
 ini_set('display_errors', 1);
 // error_reporting(E_ALL);
 
+// Single space.
 function space() {
     echo "<br>";
 }
 
+// Double space.
 function d_space() {
     space();
     space();
 }
 
-function sb_spaced($string) {
+// Single spaced string.
+function ss($string) {
     echo $string;
     space();
 }
 
-function spaced($string) {
+// Double-spaced string.
+function ds($string) {
     d_space();
 
     echo $string;
@@ -33,20 +36,23 @@ function spaced($string) {
     d_space();
 }
 
+// Simple test string.
 // Renamed because it interferes with some other function and crashes cah.ucf.edu.
-function test123() {
-    spaced("TEST");
+function test_s() {
+    ds("TEST");
 }
 
+// Tests if string is empty.
 function test_str($string) {
     if ($string === '') {
-        spaced("String is empty.");
+        ds("String is empty.");
     } else {
-        spaced($string);
+        ds($string);
     }
 }
 
-function test_str_h($label, $data) {
+// Test string with header.
+function tsh($label, $data) {
     if ($data === '' || $data === NULL) {
         return "<strong>" . $label . "</strong>: <em class='text-muted'>Data does not exist.</em>";
     } else {
@@ -54,7 +60,8 @@ function test_str_h($label, $data) {
     }
 }
 
-function s_spaced_array($strings) {
+// Single-spaced array.
+function ss_arr($strings) {
 	if ($strings == '') {
 		spaced("EMPTY ARRAY GIVEN");
 	} else {
@@ -64,7 +71,7 @@ function s_spaced_array($strings) {
 	}
 }
 
-function test_cont($data_array) {
+function dev_cont($data_array) {
     ?>
     <div class="" style="margin: 5% 0;">
         <div class="" style="   width: 75%;
@@ -77,7 +84,7 @@ function test_cont($data_array) {
         ">
             <?
                 foreach ($data_array as $data) {
-                    sb_spaced($data);
+                    ss($data);
                 }
             ?>
         </div>

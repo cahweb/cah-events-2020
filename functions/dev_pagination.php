@@ -17,11 +17,11 @@ function dev_pagination_handler($atts = []) {
     // $num_events_to_show = $atts['num-events'];
     $num_events_to_show = 20;
     
-    test_cont(array(
-        test_str_h("Filter", $filter),
-        test_str_h("Filter format", $filter_format),
-        test_str_h("Hide recurrence", ($hide_recurrence == 1) ? "True" : "False"),
-        test_str_h("Number of events to show", $num_events_to_show),
+    dev_cont(array(
+        tsh("Filter", $filter),
+        tsh("Filter format", $filter_format),
+        tsh("Hide recurrence", ($hide_recurrence == 1) ? "True" : "False"),
+        tsh("Number of events to show", $num_events_to_show),
     ));
 
     ?>
