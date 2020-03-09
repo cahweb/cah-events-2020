@@ -11,6 +11,7 @@ function dev_pagination_handler($atts = []) {
     ], $atts);
 
     $filter = $atts['filter'];
+    $filter = "theatre";
     $filter_format = $atts['filter-format'];
     $hide_recurrence = $atts['hide-recurrence'];
     // Needed for $hide_recurrence to be processed correctly in JavaScript.
@@ -68,7 +69,7 @@ function dev_pagination_handler($atts = []) {
                 v-for="(event, index) in noRepeats(json, <?= $hide_recurrence ?>)"
             >
                 <a class="cah-event-item"
-                    v-show="filterShow(currentFilter, event.filtered_category)"
+                    v-show="filterShow(getCurrentFilter('<?= $filter ?>', filters), currentFilter, event.filtered_category)"
                     v-bind:href="event.url"
                 >
                     <li class="cah-event-item-light">
@@ -255,11 +256,15 @@ function dev_pagination_handler($atts = []) {
                             }
                         }
                     },
-                    filterShow: function(currentFilter, eventFilter) {
+                    filterShow: function(givenFilter, currentFilter, eventFilter) {
+                        normalizedGivenFilter = givenFilter.toLowerCase().trim()
                         normalizedCurrentFilter = currentFilter.toLowerCase().trim()
                         normalizedEventFilter = eventFilter.toLowerCase().trim()
 
-                        console.log("Current: " + normalizedCurrentFilter + ", Event: " + normalizedEventFilter)
+                        // Takes into account the given preferred filter in the Wordpress shortcode.
+                        if (normalizedGivenFilter !== "" && normalizedCurrentFilter === "") {
+                            normalizedCurrentFilter = normalizedGivenFilter
+                        }
 
                         if (normalizedCurrentFilter === "" || normalizedCurrentFilter === "all") {
                             return true
