@@ -13,9 +13,12 @@ function dev_pagination_handler($atts = []) {
     $filter = $atts['filter'];
     $filter_format = $atts['filter-format'];
     $hide_recurrence = $atts['hide-recurrence'];
-    $hide_recurrence = true;
+    // Needed for $hide_recurrence to be processed correctly in JavaScript.
+    if ($hide_recurrence === false) {
+        $hide_recurrence = "false";
+    }
     // $num_events_to_show = $atts['num-events'];
-    $num_events_to_show = 20;
+    $num_events_to_show = 5;
     
     dev_cont(array(
         tsh("Filter", $filter),
@@ -65,6 +68,7 @@ function dev_pagination_handler($atts = []) {
                 v-for="(event, index) in noRepeats(json, <?= $hide_recurrence ?>)"
             >
                 <a class="cah-event-item"
+                    v-show="filterShow(currentFilter, event.filtered_category)"
                     v-bind:href="event.url"
                 >
                     <li class="cah-event-item-light">
@@ -250,7 +254,23 @@ function dev_pagination_handler($atts = []) {
                                 return filters[i]
                             }
                         }
-                    }
+                    },
+                    filterShow: function(currentFilter, eventFilter) {
+                        normalizedCurrentFilter = currentFilter.toLowerCase().trim()
+                        normalizedEventFilter = eventFilter.toLowerCase().trim()
+
+                        console.log("Current: " + normalizedCurrentFilter + ", Event: " + normalizedEventFilter)
+
+                        if (normalizedCurrentFilter === "" || normalizedCurrentFilter === "all") {
+                            return true
+                        } else {
+                            if (normalizedCurrentFilter === normalizedEventFilter) {
+                                return true
+                            } else {
+                                return false
+                            }
+                        }
+                    },
                 }
             })
         </script>
