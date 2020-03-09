@@ -200,6 +200,7 @@ function index_events() {
             
             // Ensures that the events are active or upcoming:
             if ($end >= time()) {
+                $event->filtered_category = strtolower(parse_event_category($event->tags));
                 array_push($events, $event);
             }
         }

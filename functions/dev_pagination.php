@@ -61,15 +61,19 @@ function dev_pagination_handler($atts = []) {
                 </div>
             </div>
 
-            <ul v-for="(event, index) in noRepeats(json, <?= $hide_recurrence ?>)"  v-if="index < <?= $num_events_to_show ?>" class="list-unstyled">
-                <a class="cah-event-item" v-bind:href="event.url">
+            <ul class="list-unstyled"
+                v-for="(event, index) in noRepeats(json, <?= $hide_recurrence ?>)"
+            >
+                <a class="cah-event-item"
+                    v-bind:href="event.url"
+                >
                     <li class="cah-event-item-light">
                         <p name="date-range" class="h5 text-primary cah-event-item-date">
                             {{ printDate(event, <?= $hide_recurrence ?>, endDateArray) }}, {{ printTime(event.starts) }} &ndash; {{ printTime(event.ends) }} 
                         </p>
 
                         <p name="title" class="h5 text-secondary">
-                            {{ event.title }}
+                            {{ event.title }} &mdash; {{ event.filtered_category }}
                         </p>
 
                         <p name="description" class="mb-0 text-muted" v-html="printDescription(event.description)"></p>
