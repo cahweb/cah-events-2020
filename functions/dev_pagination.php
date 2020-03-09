@@ -42,17 +42,21 @@ function dev_pagination_handler($atts = []) {
         <div id="mess" class="mt-5">
             <h1>This is a mess.</h1>
             <div class="dropdown w-50 my-4 mx-auto">
-                <a class="btn btn-primary dropdown-toggle w-100" href="#" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <a v-if="currentFilter === ''" class="btn btn-primary dropdown-toggle w-100" href="#" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     {{ getCurrentFilter("<?= $filter ?>", filters) }}
+                </a>
+                <a v-else class="btn btn-primary dropdown-toggle w-100" href="#" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    {{ currentFilter }}
                 </a>
 
                 <div class="dropdown-menu w-100" aria-labelledby="dropdownMenuLink">
                     <button class="dropdown-item cah-event-filter-button"
                         v-for="filter in filters"
-                        v-bind:disabled="isCurrentFilter('<?= $filter ?>', filter.value)"
-                        v-bind:value="filter.value"
+                        v-bind:disabled="isCurrentFilter(currentFilter, '<?= $filter ?>', filter)"
+                        v-bind:value="filter.toLowerCase()"
+                        v-on:click="currentFilter = filter"
                     >
-                        {{ filter.name }}
+                        {{ filter }}
                     </button>
                 </div>
             </div>
@@ -106,11 +110,11 @@ function dev_pagination_handler($atts = []) {
                     endDateArray: <? print json_encode(event_end_dates()) ?>,
                     currentFilter: "",
                     filters: [
-                        { name: "All", value: "all" },
-                        { name: "Gallery", value: "gallery" },
-                        { name: "Music", value: "music" },
-                        { name: "SVAD", value: "svad" },
-                        { name: "Theatre", value: "theatre "}
+                        "All",
+                        "Gallery",
+                        "Music",
+                        "SVAD",
+                        "Theatre",
                     ]
                 },
                 methods : {
@@ -227,17 +231,19 @@ function dev_pagination_handler($atts = []) {
 
                         return formattedHour + formattedMinutes + timePeriod
                     },
-                    isCurrentFilter: function (givenFilter, filter) {
-                        if (givenFilter.toLowerCase().trim() === filter) {
-                            return true;
+                    isCurrentFilter: function (currentFilter, givenFilter, filter) {
+                        if (currentFilter !== "" && currentFilter.toLowerCase().trim() === filter.toLowerCase()) {
+                            return true
+                        } else if (currentFilter.toLowerCase() === "" && givenFilter.toLowerCase().trim() === filter.toLowerCase()) {
+                            return true
                         } else {
-                            return false;
+                            return false
                         }
                     },
                     getCurrentFilter: function (givenFilter, filters) {
                         for (var i = 0; i < filters.length; i++) {
-                            if (givenFilter.toLowerCase().trim() === filters[i].value) {
-                                return filters[i].name
+                            if (givenFilter.toLowerCase().trim() === filters[i].toLowerCase()) {
+                                return filters[i]
                             }
                         }
                     }
