@@ -125,14 +125,17 @@ function dev_pagination_handler($atts = []) {
                 </div>
             </div>
 
-            <h4>FilteredEvents length: {{ filteredEvents.length }}</h4>
+            <h4>FilteredEvents length: {{ getTotalEvents }}</h4>
             <h4>Current filter: {{ getCurrentFilter }}</h4>
+            <h4>Index start: {{ getStartingIndexForPage }}</h4>
+            <h4>Index range: {{ getIndexRangeForPage }}</h4>
 
             <ul class="list-unstyled"
                 v-for="(event, index) in filteredEvents"
             >
                 <a class="cah-event-item"
                     v-bind:href="event.url"
+                    v-show="pageShow(index, getIndexRangeForPage)"
                 >
                     <li class="cah-event-item-light">
                         <p name="date-range" class="h5 text-primary cah-event-item-date">
@@ -140,7 +143,7 @@ function dev_pagination_handler($atts = []) {
                         </p>
 
                         <p name="title" class="h5 text-secondary">
-                            {{ event.title }} &mdash; {{ event.filtered_category }}
+                            {{ index }} &mdash; {{ event.title }} &mdash; {{ event.filtered_category }}
                         </p>
 
                         <p name="description" class="mb-0 text-muted" v-html="printDescription(event.description)"></p>
@@ -193,6 +196,7 @@ function dev_pagination_handler($atts = []) {
                     pagination: true,
                     eventsPerPage: <?= $num_events_to_show ?>,
                     currentPage: 1,
+                    currentPageStart: 0,
                 },
                 computed: {
                     getCurrentFilter: function() {
@@ -262,6 +266,37 @@ function dev_pagination_handler($atts = []) {
                             })
                         }
 
+                    },
+                    getTotalEvents: function() {
+                        return this.filteredEvents.length
+                    },
+                    getStartingIndexForPage: function() {
+                        let currentPage = this.currentPage
+                        let currentPageStart = this.currentPageStart
+                        let eventsPerPage = this.eventsPerPage
+
+                        if (currentPage !== 1) {
+                            currentPageStart = (eventsPerPage * currentPage) - eventsPerPage
+                        }
+                        
+                        return currentPageStart
+                    },
+                    getIndexRangeForPage: function() {
+                        let currentPage = this.currentPage
+                        let currentPageStart = this.getStartingIndexForPage
+                        let eventsPerPage = this.eventsPerPage
+                        let totalEvents = this.getTotalEvents
+
+                        let indexRange = []
+
+                        for (let i = currentPageStart; i < currentPageStart + eventsPerPage; i++) {
+                            if (i < totalEvents) {
+                                indexRange.push(i)
+                            }
+                        }
+
+                        // return [currentPage, currentPageStart, outOfBounds]
+                        return indexRange
                     }
                 },
                 methods : {
@@ -372,6 +407,9 @@ function dev_pagination_handler($atts = []) {
 
                         return pagesTotal
                     },
+                    pageShow: function(index, indexRange) {
+                        return indexRange.includes(index)
+                    }
                 }
             })
         </script>
