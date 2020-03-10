@@ -1,5 +1,13 @@
 <?
 
+/*
+    -----------------------------
+        TODO / Considerations
+    -----------------------------
+
+    1. Number of events when hideRecurrence is on and off.
+*/
+
 add_shortcode('dev-pagination', 'dev_pagination_handler');
 
 function dev_pagination_handler($atts = []) {
@@ -19,6 +27,7 @@ function dev_pagination_handler($atts = []) {
     $filter_format = $atts['filter-format'];
 
     $hide_recurrence = $atts['hide-recurrence'];
+    // $hide_recurrence = false;
     // Needed for $hide_recurrence to be processed correctly in JavaScript.
     if ($hide_recurrence === false) {
         $hide_recurrence = "false";
