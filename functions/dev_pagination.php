@@ -1,16 +1,21 @@
 <?
 
 /*
-    -----------------------------
-        TODO / Considerations
-    -----------------------------
+    ------------
+        TODO
+    ------------
 
-    1. Page numbers display is not accurate when filters are chosen.
-    2. Render the correct amount of items to be shown. The current default is all.
-    3. Consider what to do when the number of pages exceed the containing HTML element and runs off screen.
+    - Consider what to do when the number of pages exceed the containing HTML element and runs off screen.
         - Consider mobile devices as well.
 
-    * I think it's just my Chrome that's acting weird. Try running it in Guest mode with no extensions.
+    ----------------------
+        Considerations
+    ----------------------
+
+    * Chrome sometimes does not immediately render correctly. Try:
+        - running it in Guest mode with no extensions,
+        - wating a while before refreshing,
+        - or check in Firefox, as I don't seem to have a problem there.
 */
 
 add_shortcode('dev-pagination', 'dev_pagination_handler');
@@ -24,7 +29,6 @@ function dev_pagination_handler($atts = []) {
     ], $atts);
 
     $filter = $atts['filter'];
-    $filter = "theatre";
     // Takes into account that an empty string defaults to "all"
     if (str_replace(' ', '', $filter) === "") {
         $filter = "all";
@@ -33,8 +37,7 @@ function dev_pagination_handler($atts = []) {
     $filter_format = $atts['filter-format'];
 
     $hide_recurrence = $atts['hide-recurrence'];
-    // $hide_recurrence = false;
-    // Needed for $hide_recurrence to be processed correctly in JavaScript.
+    // Needed for $hide_recurrence to be processed correctly in JavaScript. PHP renders the false as an empty string otherwise.
     if ($hide_recurrence === false) {
         $hide_recurrence = "false";
     }
@@ -69,7 +72,7 @@ function dev_pagination_handler($atts = []) {
 
             <div class="dropdown w-50 my-4 mx-auto">
                 <a v-if="currentFilter === ''" class="btn btn-primary dropdown-toggle w-100" href="#" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    {{ getCurrentFilter("<?= $filter ?>", filters) }}
+                    {{ getCurrentFilter(givenFilter, filters) }}
                 </a>
                 <a v-else class="btn btn-primary dropdown-toggle w-100" href="#" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     {{ currentFilter }}
@@ -78,8 +81,7 @@ function dev_pagination_handler($atts = []) {
                 <div class="dropdown-menu w-100" aria-labelledby="dropdownMenuLink">
                     <button class="dropdown-item cah-event-filter-button"
                         v-for="filter in filters"
-                        v-bind:disabled="isCurrentFilter(currentFilter, '<?= $filter ?>', filter)"
-                        v-bind:value="filter.toLowerCase()"
+                        v-bind:disabled="isCurrentFilter(currentFilter, givenFilter, filter)"
                         v-on:click="currentFilter = filter"
                     >
                         {{ filter }}
@@ -102,7 +104,7 @@ function dev_pagination_handler($atts = []) {
                             </li>
 
                             <li class="page-item cah-event-filter-button"
-                                v-for="i in numberOfPages(noRepeats(json, hideRecurrence), eventsPerPage)"
+                                v-for="i in numberOfPages(filteredEvents, eventsPerPage)"
                                 v-on:click="currentPage = i"
                                 v-bind:class="{ active: i === currentPage }"
                             >
@@ -110,7 +112,7 @@ function dev_pagination_handler($atts = []) {
                             </li>
 
                             <li class="page-item cah-event-filter-button"
-                                v-bind:class="{ disabled: currentPage === numberOfPages(noRepeats(json, hideRecurrence), eventsPerPage), 'disabled-hover': currentPage === numberOfPages(noRepeats(json, hideRecurrence), eventsPerPage) }"
+                                v-bind:class="{ disabled: currentPage === numberOfPages(filteredEvents, eventsPerPage), 'disabled-hover': currentPage === numberOfPages(filteredEvents, eventsPerPage) }"
                             >
                                 <span class="page-link"
                                     v-on:click="currentPage++" 
@@ -124,12 +126,19 @@ function dev_pagination_handler($atts = []) {
             </div>
 
             <h3>Current page: {{ currentPage }}</h3>
+            <h4>Test {{ uniqueEventIds.length }} {{ currentFilter }}</h4>
+            <ul>
+                <li
+                    v-for="event in filteredEvents"
+                >
+                    {{ event.event_id }} &mdash; {{ event.filtered_category }}
+                </li>
+            </ul>
 
             <ul class="list-unstyled"
-                v-for="(event, index) in noRepeats(json, hideRecurrence)"
+                v-for="(event, index) in filteredEvents"
             >
                 <a class="cah-event-item"
-                    v-show="filterShow(getCurrentFilter('<?= $filter ?>', filters), currentFilter, event.filtered_category)"
                     v-bind:href="event.url"
                 >
                     <li class="cah-event-item-light">
@@ -178,6 +187,8 @@ function dev_pagination_handler($atts = []) {
                     json: <? print json_encode(index_events()) ?>,
                     endDateArray: <? print json_encode(event_end_dates()) ?>,
                     currentFilter: "",
+                    givenFilter: "<?= $filter ?>",
+                    uniqueEventIds: [],
                     filters: [
                         "All",
                         "Gallery",
@@ -190,12 +201,12 @@ function dev_pagination_handler($atts = []) {
                     eventsPerPage: <?= $num_events_to_show ?>,
                     currentPage: 1,
                 },
-                methods : {
-                    noRepeats: function(json, hideRecurrence) {
-                        if (hideRecurrence) {
-                            var uniqueIds = []
-                            return json.filter(function (event) {
-                                if (uniqueIds.length === 0) {
+                computed: {
+                    noRepeatedEvents: function() {
+                        let uniqueIds = this.uniqueEventIds
+
+                        return this.json.filter(function (event) {
+                            if (uniqueIds.length === 0) {
                                     uniqueIds.push(event.event_id)
                                     return event
                                 } else {
@@ -206,11 +217,51 @@ function dev_pagination_handler($atts = []) {
                                         }
                                     }
                                 }
+                        })
+                    },
+                    filteredEvents: function() {
+                        let givenFilter = this.givenFilter
+                        let currentFilter = this.currentFilter
+                        let hideRecurrence = this.hideRecurrence
+                        
+                        function filterShow(givenFilter, currentFilter, eventFilter) {
+                            normalizedGivenFilter = givenFilter.toLowerCase().trim()
+                            normalizedCurrentFilter = currentFilter.toLowerCase().trim()
+                            normalizedEventFilter = eventFilter.toLowerCase().trim()
+
+                            // Takes into account the given preferred filter in the Wordpress shortcode.
+                            if (normalizedGivenFilter !== "" && normalizedCurrentFilter === "") {
+                                normalizedCurrentFilter = normalizedGivenFilter
+                            }
+
+                            if (normalizedCurrentFilter === "" || normalizedCurrentFilter === "all") {
+                                return true
+                            } else {
+                                if (normalizedCurrentFilter === normalizedEventFilter) {
+                                    return true
+                                } else {
+                                    return false
+                                }
+                            }
+                        }
+
+                        if (hideRecurrence) {
+                            return this.noRepeatedEvents.filter(function (event) {
+                                if (filterShow(givenFilter, currentFilter, event.filtered_category)) {
+                                        return event
+                                }
                             })
                         } else {
-                            return json
+                            return this.json.filter(function (event) {
+                                if (filterShow(givenFilter, currentFilter, event.filtered_category)) {
+                                        return event
+                                }
+                            })
                         }
-                    },
+
+                    }
+                },
+                methods : {
                     printDescription: function(description) {
                         // return description.replace(/<[^>]*>?/gm, '')
                         var str = description.replace(/(\n|<br>|<p>|<\/p>|<span>|<\/span>|<li>|<\/li>)/igm, " ").trim()
@@ -317,26 +368,6 @@ function dev_pagination_handler($atts = []) {
                         for (var i = 0; i < filters.length; i++) {
                             if (givenFilter.toLowerCase().trim() === filters[i].toLowerCase()) {
                                 return filters[i]
-                            }
-                        }
-                    },
-                    filterShow: function(givenFilter, currentFilter, eventFilter) {
-                        normalizedGivenFilter = givenFilter.toLowerCase().trim()
-                        normalizedCurrentFilter = currentFilter.toLowerCase().trim()
-                        normalizedEventFilter = eventFilter.toLowerCase().trim()
-
-                        // Takes into account the given preferred filter in the Wordpress shortcode.
-                        if (normalizedGivenFilter !== "" && normalizedCurrentFilter === "") {
-                            normalizedCurrentFilter = normalizedGivenFilter
-                        }
-
-                        if (normalizedCurrentFilter === "" || normalizedCurrentFilter === "all") {
-                            return true
-                        } else {
-                            if (normalizedCurrentFilter === normalizedEventFilter) {
-                                return true
-                            } else {
-                                return false
                             }
                         }
                     },
