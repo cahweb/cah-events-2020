@@ -23,10 +23,10 @@ function dev_pagination_handler($atts = []) {
         'num-events' => 5,
     ], $atts);
 
-    // $filter = $atts['filter'];
+    $filter = $atts['filter'];
     $filter = "theatre";
     // Takes into account that an empty string defaults to "all"
-    if (trim($fitler) === "") {
+    if (str_replace(' ', '', $filter) === "") {
         $filter = "all";
     }
 
