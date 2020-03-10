@@ -5,7 +5,9 @@
         TODO / Considerations
     -----------------------------
 
-    1. Number of events when hideRecurrence is on and off.
+    1. Link pagination buttons to the number of events to be shown.
+    2. Render the correct amount of items to be shown. The current default is all.
+    3. Consider what to do when the number of pages exceed the containing HTML element and runs off screen.
 */
 
 add_shortcode('dev-pagination', 'dev_pagination_handler');
@@ -39,7 +41,7 @@ function dev_pagination_handler($atts = []) {
     dev_cont(array(
         tsh("Filter", $filter),
         tsh("Filter format", $filter_format),
-        tsh("Hide recurrence", ($hide_recurrence == 1) ? "True" : "False"),
+        tsh("Hide recurrence", $hide_recurrence),
         tsh("Number of events to show", $num_events_to_show),
     ));
 
@@ -90,7 +92,7 @@ function dev_pagination_handler($atts = []) {
                             </li>
 
                             <li class="page-item"
-                                v-for="i in numberOfPages(json, eventsPerPage, pagesTotal)"
+                                v-for="i in numberOfPages(noRepeats(json, <?= $hide_recurrence ?>), eventsPerPage, pagesTotal)"
                             >
                                 <span class="page-link">{{ i }}</span>
                             </li>
@@ -165,7 +167,7 @@ function dev_pagination_handler($atts = []) {
                     ],
                     pagination: true,
                     pagesTotal: 0,
-                    eventsPerPage: <?= $num_events_to_show ?>,
+                    eventsPerPage: <?= $num_events_to_show ?>
                 },
                 methods : {
                     noRepeats: function(json, hideRecurrence) {
@@ -317,12 +319,8 @@ function dev_pagination_handler($atts = []) {
                             }
                         }
                     },
-                    numberOfPages: function(json, numEventsToShow, pagesTotal) {
-                        pagesTotal = Math.ceil(json.length / numEventsToShow)
-
-                        console.log("Total events: " + json.length)
-                        console.log("Number of events to show: " + numEventsToShow)
-                        console.log("Pages needed: " + pagesTotal)
+                    numberOfPages: function(events, numEventsToShow, pagesTotal) {
+                        pagesTotal = Math.ceil(events.length / numEventsToShow)
 
                         return pagesTotal
                     },
