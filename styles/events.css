@@ -33,3 +33,7 @@ a.cah-event-item {
 .cah-event-filter-button {
     cursor: pointer;
 }
+
+.disabled-hover {
+    cursor: no-drop;
+}

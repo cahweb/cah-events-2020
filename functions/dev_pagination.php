@@ -5,9 +5,12 @@
         TODO / Considerations
     -----------------------------
 
-    1. Link pagination buttons to the number of events to be shown.
+    1. Page numbers display is not accurate when filters are chosen.
     2. Render the correct amount of items to be shown. The current default is all.
     3. Consider what to do when the number of pages exceed the containing HTML element and runs off screen.
+        - Consider mobile devices as well.
+
+    * I think it's just my Chrome that's acting weird. Try running it in Guest mode with no extensions.
 */
 
 add_shortcode('dev-pagination', 'dev_pagination_handler');
@@ -20,7 +23,8 @@ function dev_pagination_handler($atts = []) {
         'num-events' => 5,
     ], $atts);
 
-    $filter = $atts['filter'];
+    // $filter = $atts['filter'];
+    $filter = "theatre";
     // Takes into account that an empty string defaults to "all"
     if (trim($fitler) === "") {
         $filter = "all";
@@ -87,26 +91,42 @@ function dev_pagination_handler($atts = []) {
                 <div class="mx-auto">
                     <nav aria-label="page-navigation">
                         <ul class="pagination justify-content-center">
-                            <li class="page-item">
-                                <span class="page-link" tabindex="-1">«</span>
+                            <li class="page-item cah-event-filter-button"
+                                v-bind:class="{ disabled: currentPage === 1, 'disabled-hover': currentPage === 1 }"
+                            >
+                                <span class="page-link" tabindex="-1"
+                                    v-on:click="currentPage--" 
+                                >
+                                    «
+                                </span>
                             </li>
 
-                            <li class="page-item"
-                                v-for="i in numberOfPages(noRepeats(json, <?= $hide_recurrence ?>), eventsPerPage, pagesTotal)"
+                            <li class="page-item cah-event-filter-button"
+                                v-for="i in numberOfPages(noRepeats(json, hideRecurrence), eventsPerPage)"
+                                v-on:click="currentPage = i"
+                                v-bind:class="{ active: i === currentPage }"
                             >
                                 <span class="page-link">{{ i }}</span>
                             </li>
 
-                            <li class="page-item">
-                                <span class="page-link" >»</span>
+                            <li class="page-item cah-event-filter-button"
+                                v-bind:class="{ disabled: currentPage === numberOfPages(noRepeats(json, hideRecurrence), eventsPerPage), 'disabled-hover': currentPage === numberOfPages(noRepeats(json, hideRecurrence), eventsPerPage) }"
+                            >
+                                <span class="page-link"
+                                    v-on:click="currentPage++" 
+                                >
+                                    »
+                                </span>
                             </li>
                         </ul>
                     </nav>
                 </div>
             </div>
 
+            <h3>Current page: {{ currentPage }}</h3>
+
             <ul class="list-unstyled"
-                v-for="(event, index) in noRepeats(json, <?= $hide_recurrence ?>)"
+                v-for="(event, index) in noRepeats(json, hideRecurrence)"
             >
                 <a class="cah-event-item"
                     v-show="filterShow(getCurrentFilter('<?= $filter ?>', filters), currentFilter, event.filtered_category)"
@@ -114,7 +134,7 @@ function dev_pagination_handler($atts = []) {
                 >
                     <li class="cah-event-item-light">
                         <p name="date-range" class="h5 text-primary cah-event-item-date">
-                            {{ printDate(event, <?= $hide_recurrence ?>, endDateArray) }}, {{ printTime(event.starts) }} &ndash; {{ printTime(event.ends) }} 
+                            {{ printDate(event, hideRecurrence, endDateArray) }}, {{ printTime(event.starts) }} &ndash; {{ printTime(event.ends) }} 
                         </p>
 
                         <p name="title" class="h5 text-secondary">
@@ -165,9 +185,10 @@ function dev_pagination_handler($atts = []) {
                         "SVAD",
                         "Theatre",
                     ],
+                    hideRecurrence: <?= $hide_recurrence ?>,
                     pagination: true,
-                    pagesTotal: 0,
-                    eventsPerPage: <?= $num_events_to_show ?>
+                    eventsPerPage: <?= $num_events_to_show ?>,
+                    currentPage: 1,
                 },
                 methods : {
                     noRepeats: function(json, hideRecurrence) {
@@ -319,8 +340,8 @@ function dev_pagination_handler($atts = []) {
                             }
                         }
                     },
-                    numberOfPages: function(events, numEventsToShow, pagesTotal) {
-                        pagesTotal = Math.ceil(events.length / numEventsToShow)
+                    numberOfPages: function(events, numEventsToShow) {
+                        let pagesTotal = Math.ceil(events.length / numEventsToShow)
 
                         return pagesTotal
                     },
