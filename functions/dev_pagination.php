@@ -72,7 +72,7 @@ function dev_pagination_handler($atts = []) {
 
             <div class="dropdown w-50 my-4 mx-auto">
                 <a v-if="currentFilter === ''" class="btn btn-primary dropdown-toggle w-100" href="#" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    {{ getCurrentFilter(givenFilter, filters) }}
+                    {{ getCurrentFilter }}
                 </a>
                 <a v-else class="btn btn-primary dropdown-toggle w-100" href="#" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     {{ currentFilter }}
@@ -125,15 +125,8 @@ function dev_pagination_handler($atts = []) {
                 </div>
             </div>
 
-            <h3>Current page: {{ currentPage }}</h3>
-            <h4>Test {{ uniqueEventIds.length }} {{ currentFilter }}</h4>
-            <ul>
-                <li
-                    v-for="event in filteredEvents"
-                >
-                    {{ event.event_id }} &mdash; {{ event.filtered_category }}
-                </li>
-            </ul>
+            <h4>FilteredEvents length: {{ filteredEvents.length }}</h4>
+            <h4>Current filter: {{ getCurrentFilter }}</h4>
 
             <ul class="list-unstyled"
                 v-for="(event, index) in filteredEvents"
@@ -202,6 +195,16 @@ function dev_pagination_handler($atts = []) {
                     currentPage: 1,
                 },
                 computed: {
+                    getCurrentFilter: function() {
+                        let givenFilter = this.givenFilter
+                        let filters = this.filters
+
+                        for (var i = 0; i < filters.length; i++) {
+                            if (givenFilter.toLowerCase().trim() === filters[i].toLowerCase()) {
+                                return filters[i]
+                            }
+                        }
+                    },
                     noRepeatedEvents: function() {
                         let uniqueIds = this.uniqueEventIds
 
@@ -248,13 +251,13 @@ function dev_pagination_handler($atts = []) {
                         if (hideRecurrence) {
                             return this.noRepeatedEvents.filter(function (event) {
                                 if (filterShow(givenFilter, currentFilter, event.filtered_category)) {
-                                        return event
+                                    return event
                                 }
                             })
                         } else {
                             return this.json.filter(function (event) {
                                 if (filterShow(givenFilter, currentFilter, event.filtered_category)) {
-                                        return event
+                                    return event
                                 }
                             })
                         }
@@ -362,13 +365,6 @@ function dev_pagination_handler($atts = []) {
                             return true
                         } else {
                             return false
-                        }
-                    },
-                    getCurrentFilter: function (givenFilter, filters) {
-                        for (var i = 0; i < filters.length; i++) {
-                            if (givenFilter.toLowerCase().trim() === filters[i].toLowerCase()) {
-                                return filters[i]
-                            }
                         }
                     },
                     numberOfPages: function(events, numEventsToShow) {
