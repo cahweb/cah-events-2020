@@ -18,6 +18,10 @@
         - 'paged'
         - 'button' or 'btn'
         - 'none' (default)
+    
+    front:
+        - true
+        - false
 */
 
 add_shortcode('dev-events', 'dev_events_handler');
@@ -29,6 +33,7 @@ function dev_events_handler($atts = []) {
         'show-more-format' => '',
         'hide-recurrence' => false,
         'num-events' => 5,
+        'front' => false,
     ], $atts);
 
     $filter = $atts['filter'];
@@ -36,9 +41,10 @@ function dev_events_handler($atts = []) {
     $show_more_format = $atts['show-more-format'];
     $hide_recurrence = $atts['hide-recurrence'];
     $num_events_to_show = $atts['num-events'];
+    $front = $atts['front'];
 
     // For enabling and disabling dev features and Vuejs modes.
-    $dev = true;
+    $dev = false;
     
     if ($dev) {
         // Set dev attributes manually.
@@ -47,6 +53,7 @@ function dev_events_handler($atts = []) {
         $show_more_format = 'btn';
         // $hide_recurrence = false;
         $num_events_to_show = 3;
+        $front = true;
 
         dev_cont(array(
             dev_cont_h("Shortcode Attributes"),
@@ -55,6 +62,7 @@ function dev_events_handler($atts = []) {
             tsh("Show more format", $show_more_format),
             tsh("Hide recurrence", $hide_recurrence),
             tsh("Number of events to show", $num_events_to_show),
+            tsh("Front", $front),
         ));
     }
 
@@ -70,7 +78,7 @@ function dev_events_handler($atts = []) {
 
     ob_start();
 
-    render_events($filter, $filter_format, $show_more_format, $hide_recurrence, $num_events_to_show, $dev);
+    render_events($filter, $filter_format, $show_more_format, $hide_recurrence, $num_events_to_show, $dev, $front);
 
     return ob_get_clean();
 }

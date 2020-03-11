@@ -11,7 +11,7 @@
         TODO
     ------------
 
-    - Add 'button'/'btn' showMoreFormat.
+    - Add in front-page formatting.
     - Consider what to do when the number of pages exceed the containing HTML element and runs off screen.
         - Consider mobile devices as well.
 
@@ -25,7 +25,7 @@
         - or check in Firefox, as I don't seem to have a problem there.
 */
 
-function render_events($filter, $filter_format, $show_more_format, $hide_recurrence, $num_events_to_show, $dev) {
+function render_events($filter, $filter_format, $show_more_format, $hide_recurrence, $num_events_to_show, $dev, $front) {
 
     ?>
 
@@ -147,7 +147,7 @@ function render_events($filter, $filter_format, $show_more_format, $hide_recurre
                                     </p>
 
                                     <p name="title" class="h5 text-secondary">
-                                        {{ index }} &mdash; {{ event.title }} &mdash; {{ event.filtered_category }}
+                                        {{ event.title }}
                                     </p>
 
                                     <p name="description" class="mb-0 text-muted" v-html="printDescription(event.description)"></p>
