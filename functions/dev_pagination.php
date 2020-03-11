@@ -82,7 +82,7 @@ function dev_pagination_handler($atts = []) {
                     <button class="dropdown-item cah-event-filter-button"
                         v-for="filter in filters"
                         v-bind:disabled="isCurrentFilter(currentFilter, givenFilter, filter)"
-                        v-on:click="currentFilter = filter"
+                        v-on:click="currentFilter = filter; currentPage = 1"
                     >
                         {{ filter }}
                     </button>
@@ -129,6 +129,8 @@ function dev_pagination_handler($atts = []) {
             <h4>Current filter: {{ getCurrentFilter }}</h4>
             <h4>Index start: {{ getStartingIndexForPage }}</h4>
             <h4>Index range: {{ getIndexRangeForPage }}</h4>
+            <h4>currentPage: {{ currentPage }}</h4>
+            <h4>currentPageStart: {{ currentPageStart }}</h4>
 
             <ul class="list-unstyled"
                 v-for="(event, index) in filteredEvents"
