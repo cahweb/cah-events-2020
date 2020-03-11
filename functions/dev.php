@@ -71,6 +71,11 @@ function ss_arr($strings) {
 	}
 }
 
+// Header for dev_cont.
+function dev_cont_h($string) {
+    return '<p class="m-0 text-uppercase font-weight-bold letter-spacing-5">' . $string . '</p><hr class="mb-0">';
+}
+
 function dev_cont($data_array) {
     ?>
     <div class="" style="margin: 5% 0;">

@@ -1,10 +1,17 @@
 <?
 
 /*
+    ----------------------------    
+        HTML/Vue.js Template
+    ----------------------------
+
+    How the plugin renders.
+
     ------------
         TODO
     ------------
 
+    - Add 'button'/'btn' showMoreFormat.
     - Consider what to do when the number of pages exceed the containing HTML element and runs off screen.
         - Consider mobile devices as well.
 
@@ -18,59 +25,75 @@
         - or check in Firefox, as I don't seem to have a problem there.
 */
 
-add_shortcode('dev-pagination', 'dev_pagination_handler');
-
-function dev_pagination_handler($atts = []) {
-    $attributes = shortcode_atts([
-        'filter' => 'all',
-        'filter-format' => '',
-        'hide-recurrence' => false,
-        'num-events' => 5,
-    ], $atts);
-
-    $filter = $atts['filter'];
-    // Takes into account that an empty string defaults to "all"
-    if (str_replace(' ', '', $filter) === "") {
-        $filter = "all";
-    }
-
-    $filter_format = $atts['filter-format'];
-
-    $hide_recurrence = $atts['hide-recurrence'];
-    // Needed for $hide_recurrence to be processed correctly in JavaScript. PHP renders the false as an empty string otherwise.
-    if ($hide_recurrence === false) {
-        $hide_recurrence = "false";
-    }
-
-    // $num_events_to_show = $atts['num-events'];
-    $num_events_to_show = 5;
-    
-    dev_cont(array(
-        tsh("Filter", $filter),
-        tsh("Filter format", $filter_format),
-        tsh("Hide recurrence", $hide_recurrence),
-        tsh("Number of events to show", $num_events_to_show),
-    ));
+function render_events($filter, $filter_format, $show_more_format, $hide_recurrence, $num_events_to_show, $dev) {
 
     ?>
 
-        <div id="app" class="demo">
-            <component v-bind:is="currentPageComponent" class="page"></component>
-            
-            <button
-                v-for="page in pages"
-                v-bind:key="page"
-                v-bind:class="['page-button', { active: currentPage === page }]"
-                v-on:click="currentPage = page"
-            >
-                {{ page }}
-            </button>
-        </div>
+        <div id="app" class="">
 
-        <div id="mess" class="mt-5">
-            <h1>This is a mess.</h1>
+            <? if ($dev) { ?>
+                <div v-show="true" style="width: 75%; padding: 2%; margin: auto auto; background-color: #f9e7c9; border-color: #eddaba; border-style: solid; border-radius: 8px;" class="mb-5">
+                    <p class="m-0 text-uppercase font-weight-bold letter-spacing-5">
+                        Vue.js Data
+                    </p>
+                    
+                    <hr>
 
-            <div class="dropdown w-50 my-4 mx-auto">
+                    <ul class="mb-0">
+                        <li>
+                            <strong>currentFilter: </strong>
+                            {{ currentFilter }}
+                        </li>
+
+                        <li>
+                            <strong>givenFilter: </strong>
+                            {{ givenFilter }}
+                        </li>
+
+                        <li v-show="false">
+                            <strong>uniqueEventIds: </strong>
+                            {{ uniqueEventIds }}
+                        </li>
+                        
+                        <li>
+                            <strong>filterFormat: </strong>
+                            {{ filterFormat }}
+                        </li>
+
+                        <li>
+                            <strong>showMoreFormat: </strong>
+                            {{ showMoreFormat }}
+                        </li>
+                        
+                        <li>
+                            <strong>filteredEvents.length: </strong>
+                            {{ filteredEvents.length }}
+                        </li>
+
+                        <li>
+                            <strong>currentPage: </strong>
+                            {{ currentPage }}
+                        </li>
+
+                        <li>
+                            <strong>currentPageStart: </strong>
+                            {{ currentPageStart }}
+                        </li>
+
+                        <li>
+                            <strong>getStartingIndexForPage: </strong>
+                            {{ getStartingIndexForPage }}
+                        </li>
+
+                        <li>
+                            <strong>getIndexRangeForPage: </strong>
+                            {{ getIndexRangeForPage }}
+                        </li>
+                    </ul>
+                </div>
+            <? } ?>
+
+            <div v-if="filterFormat === 'dropdown'" class="dropdown my-4 mx-auto" style="width: 35%;">
                 <a v-if="currentFilter === ''" class="btn btn-primary dropdown-toggle w-100" href="#" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     {{ getCurrentFilter }}
                 </a>
@@ -89,7 +112,43 @@ function dev_pagination_handler($atts = []) {
                 </div>
             </div>
 
-            <div class="row my-3">
+            <div v-else class="d-flex flex-column">
+                <div v-bind:class="[filterFormat === 'list' ? 'row justify-content-between' : '']">
+                    <div v-show="filterFormat === 'list'" class="col-sm-2 my-3">
+                        <button class="list-group-item list-group-item-action cah-event-filter-button"
+                            v-for="filter in filters"
+                            v-bind:class="isCurrentFilter(currentFilter, givenFilter, filter) ? 'active' : ''"
+                            v-on:click="currentFilter = filter; currentPage = 1"
+                        >
+                            {{ filter }}
+                        </button>
+                    </div>
+
+                    <div v-bind:class="[filterFormat === 'list' ? 'col-sm-9' : '']">
+                        <ul class="list-unstyled">
+                            <a class="cah-event-item"
+                                v-for="(event, index) in filteredEvents"
+                                v-bind:href="event.url"
+                                v-show="pageShow(index, getIndexRangeForPage)"
+                            >
+                                <li class="cah-event-item-light">
+                                    <p name="date-range" class="h5 text-primary cah-event-item-date">
+                                        {{ printDate(event, hideRecurrence, endDateArray) }}, {{ printTime(event.starts) }} &ndash; {{ printTime(event.ends) }} 
+                                    </p>
+
+                                    <p name="title" class="h5 text-secondary">
+                                        {{ index }} &mdash; {{ event.title }} &mdash; {{ event.filtered_category }}
+                                    </p>
+
+                                    <p name="description" class="mb-0 text-muted" v-html="printDescription(event.description)"></p>
+                                </li>
+                            </a>
+                        </ul>
+                    </div>
+                </div>
+            </div>         
+
+            <div v-if="showMoreFormat === 'paged'" class="row my-3">
                 <div class="mx-auto">
                     <nav aria-label="page-navigation">
                         <ul class="pagination justify-content-center">
@@ -124,63 +183,21 @@ function dev_pagination_handler($atts = []) {
                     </nav>
                 </div>
             </div>
-
-            <h4>FilteredEvents length: {{ getTotalEvents }}</h4>
-            <h4>Current filter: {{ getCurrentFilter }}</h4>
-            <h4>Index start: {{ getStartingIndexForPage }}</h4>
-            <h4>Index range: {{ getIndexRangeForPage }}</h4>
-            <h4>currentPage: {{ currentPage }}</h4>
-            <h4>currentPageStart: {{ currentPageStart }}</h4>
-
-            <ul class="list-unstyled"
-                v-for="(event, index) in filteredEvents"
-            >
-                <a class="cah-event-item"
-                    v-bind:href="event.url"
-                    v-show="pageShow(index, getIndexRangeForPage)"
-                >
-                    <li class="cah-event-item-light">
-                        <p name="date-range" class="h5 text-primary cah-event-item-date">
-                            {{ printDate(event, hideRecurrence, endDateArray) }}, {{ printTime(event.starts) }} &ndash; {{ printTime(event.ends) }} 
-                        </p>
-
-                        <p name="title" class="h5 text-secondary">
-                            {{ index }} &mdash; {{ event.title }} &mdash; {{ event.filtered_category }}
-                        </p>
-
-                        <p name="description" class="mb-0 text-muted" v-html="printDescription(event.description)"></p>
-                    </li>
-                </a>
-            </ul>
         </div>
 
-        <script src="https://unpkg.com/vue"></script>
-        <script>
-            Vue.component("page-home", {
-                template: "<div>Home component</div>"
-            });
-            Vue.component("page-posts", {
-                template: "<div>Posts component</div>"
-            });
-            Vue.component("page-archive", {
-                template: "<div>Archive component</div>"
-            });
+        <?
+            if ($dev) {
+            // Most up-to-date production version of Vue.js.
+            echo '<script src="https://unpkg.com/vue"></script>';
+            } else {
+            // Production version 2.6.11.
+            echo '<script src="https://cdn.jsdelivr.net/npm/vue@2.6.11"></script>';
+            }
+        ?>
 
+        <script>
             new Vue({
                 el: "#app",
-                data: {
-                    currentPage: "Home",
-                    pages: ["Home", "Posts", "Archive"]
-                },
-                computed: {
-                    currentPageComponent: function() {
-                        return "page-" + this.currentPage.toLowerCase();
-                    }
-                }
-            });
-            
-            new Vue({
-                el: "#mess",
                 data: {
                     json: <? print json_encode(index_events()) ?>,
                     endDateArray: <? print json_encode(event_end_dates()) ?>,
@@ -194,6 +211,8 @@ function dev_pagination_handler($atts = []) {
                         "SVAD",
                         "Theatre",
                     ],
+                    filterFormat: "<?= normalize_string($filter_format) ?>",
+                    showMoreFormat: "<?= normalize_string($show_more_format) ?>",
                     hideRecurrence: <?= $hide_recurrence ?>,
                     pagination: true,
                     eventsPerPage: <?= $num_events_to_show ?>,
@@ -417,6 +436,7 @@ function dev_pagination_handler($atts = []) {
         </script>
 
     <?
+
 }
 
 ?>
