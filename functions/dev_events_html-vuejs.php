@@ -89,6 +89,16 @@ function render_events($filter, $filter_format, $show_more_format, $hide_recurre
                             <strong>getIndexRangeForPage: </strong>
                             {{ getIndexRangeForPage }}
                         </li>
+
+                        <li>
+                            <strong>indexRange: </strong>
+                            {{ indexRange }}
+                        </li>
+
+                        <li>
+                            <strong>appendToIndexRange: </strong>
+                            {{ appendToIndexRange }}
+                        </li>
                     </ul>
                 </div>
             <? } ?>
@@ -118,7 +128,7 @@ function render_events($filter, $filter_format, $show_more_format, $hide_recurre
                         <button class="list-group-item list-group-item-action cah-event-filter-button"
                             v-for="filter in filters"
                             v-bind:class="isCurrentFilter(currentFilter, givenFilter, filter) ? 'active' : ''"
-                            v-on:click="currentFilter = filter; currentPage = 1"
+                            v-on:click="currentFilter = filter; currentPage = 1; indexRange = []; appendToIndexRange = false"
                         >
                             {{ filter }}
                         </button>
@@ -148,7 +158,7 @@ function render_events($filter, $filter_format, $show_more_format, $hide_recurre
                 </div>
             </div>         
 
-            <div v-if="showMoreFormat === 'paged'" class="row my-3">
+            <div v-show="showMoreFormat === 'paged'" class="row my-3">
                 <div class="mx-auto">
                     <nav aria-label="page-navigation">
                         <ul class="pagination justify-content-center">
@@ -156,7 +166,7 @@ function render_events($filter, $filter_format, $show_more_format, $hide_recurre
                                 v-bind:class="{ disabled: currentPage === 1, 'disabled-hover': currentPage === 1 }"
                             >
                                 <span class="page-link" tabindex="-1"
-                                    v-on:click="currentPage--" 
+                                    v-on:click="currentPage--; indexRange = []; appendToIndexRange = false" 
                                 >
                                     «
                                 </span>
@@ -164,7 +174,7 @@ function render_events($filter, $filter_format, $show_more_format, $hide_recurre
 
                             <li class="page-item cah-event-filter-button"
                                 v-for="i in numberOfPages(filteredEvents, eventsPerPage)"
-                                v-on:click="currentPage = i"
+                                v-on:click="currentPage = i; indexRange = []; appendToIndexRange = false"
                                 v-bind:class="{ active: i === currentPage }"
                             >
                                 <span class="page-link">{{ i }}</span>
@@ -174,13 +184,24 @@ function render_events($filter, $filter_format, $show_more_format, $hide_recurre
                                 v-bind:class="{ disabled: currentPage === numberOfPages(filteredEvents, eventsPerPage), 'disabled-hover': currentPage === numberOfPages(filteredEvents, eventsPerPage) }"
                             >
                                 <span class="page-link"
-                                    v-on:click="currentPage++" 
+                                    v-on:click="currentPage++; indexRange = []; appendToIndexRange = false" 
                                 >
                                     »
                                 </span>
                             </li>
                         </ul>
                     </nav>
+                </div>
+            </div>
+
+            <div v-show="showMoreFormat === 'btn' || showMoreFormat === 'button'" class="row my-3">
+                <div class="mx-auto">
+                    <button class="btn btn-primary"
+                        v-bind:disabled="filteredEvents.length - 1 <= indexRange.slice(-1)[0]"
+                        v-on:click="currentPage++; appendToIndexRange = true"
+                    >
+                        Show More
+                    </button>
                 </div>
             </div>
         </div>
@@ -218,6 +239,8 @@ function render_events($filter, $filter_format, $show_more_format, $hide_recurre
                     eventsPerPage: <?= $num_events_to_show ?>,
                     currentPage: 1,
                     currentPageStart: 0,
+                    indexRange: [],
+                    appendToIndexRange: false,
                 },
                 computed: {
                     getCurrentFilter: function() {
@@ -307,8 +330,8 @@ function render_events($filter, $filter_format, $show_more_format, $hide_recurre
                         let currentPageStart = this.getStartingIndexForPage
                         let eventsPerPage = this.eventsPerPage
                         let totalEvents = this.getTotalEvents
-
-                        let indexRange = []
+                        let appendToIndexRange = this.appendToIndexRange
+                        let indexRange = this.indexRange
 
                         for (let i = currentPageStart; i < currentPageStart + eventsPerPage; i++) {
                             if (i < totalEvents) {
@@ -316,7 +339,6 @@ function render_events($filter, $filter_format, $show_more_format, $hide_recurre
                             }
                         }
 
-                        // return [currentPage, currentPageStart, outOfBounds]
                         return indexRange
                     }
                 },

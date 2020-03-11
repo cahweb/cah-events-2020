@@ -44,9 +44,9 @@ function dev_events_handler($atts = []) {
         // Set dev attributes manually.
         $filter = $atts['filter'];
         // $filter_format = 'dropdown';
-        // $show_more_format = 'btn';
+        $show_more_format = 'btn';
         // $hide_recurrence = false;
-        // $num_events_to_show = 3;
+        $num_events_to_show = 3;
 
         dev_cont(array(
             dev_cont_h("Shortcode Attributes"),
