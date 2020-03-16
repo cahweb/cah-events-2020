@@ -44,26 +44,28 @@ function events_handler($atts = []) {
     $front = $atts['front'];
 
     // For enabling and disabling dev features and Vuejs modes.
-    $dev = true;
+    $dev = false;
     
-    if ($dev && false) {
+    if ($dev) {
         // // Set dev attributes manually.
         // $filter = $atts['filter'];
         // $filter_format = 'dropdown';
         // $show_more_format = 'btn';
         // $hide_recurrence = false;
         // $num_events_to_show = 3;
-        // $front = true;
+        // $front = false;
 
-        dev_cont(array(
-            dev_cont_h("(BEFORE) Shortcode Attributes"),
-            tsh("Filter", $filter),
-            tsh("Filter format", $filter_format),
-            tsh("Show more format", $show_more_format),
-            tsh("Hide recurrence", $hide_recurrence),
-            tsh("Number of events to show", $num_events_to_show),
-            tsh("Front", $front),
-        ));
+        if ($dev && false) {
+            dev_cont(array(
+                dev_cont_h("(BEFORE) Shortcode Attributes"),
+                tsh("Filter", $filter),
+                tsh("Filter format", $filter_format),
+                tsh("Show more format", $show_more_format),
+                tsh("Hide recurrence", $hide_recurrence),
+                tsh("Number of events to show", $num_events_to_show),
+                tsh("Front", $front),
+            ));
+        }
     }
 
     // Takes into account that an empty string defaults to "all" for $filter.
@@ -85,7 +87,7 @@ function events_handler($atts = []) {
         $front = "false";
     }
 
-    if ($dev) {
+    if ($dev && false) {
         dev_cont(array(
             dev_cont_h("(AFTER) Shortcode Attributes"),
             tsh("Filter", $filter),
