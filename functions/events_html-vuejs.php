@@ -40,12 +40,12 @@ function render_events($filter, $filter_format, $show_more_format, $hide_recurre
                     <hr>
 
                     <ul class="mb-0">
-                        <li>
+                        <li v-show="false">
                             <strong>currentFilter: </strong>
                             {{ currentFilter }}
                         </li>
 
-                        <li>
+                        <li v-show="false">
                             <strong>givenFilter: </strong>
                             {{ givenFilter }}
                         </li>
@@ -55,49 +55,59 @@ function render_events($filter, $filter_format, $show_more_format, $hide_recurre
                             {{ uniqueEventIds }}
                         </li>
                         
-                        <li>
+                        <li v-show="false">
                             <strong>filterFormat: </strong>
                             {{ filterFormat }}
                         </li>
 
-                        <li>
+                        <li v-show="false">
                             <strong>showMoreFormat: </strong>
                             {{ showMoreFormat }}
                         </li>
                         
-                        <li>
+                        <li v-show="false">
                             <strong>filteredEvents.length: </strong>
                             {{ filteredEvents.length }}
                         </li>
 
-                        <li>
+                        <li v-show="false">
                             <strong>currentPage: </strong>
                             {{ currentPage }}
                         </li>
 
-                        <li>
+                        <li v-show="false">
                             <strong>currentPageStart: </strong>
                             {{ currentPageStart }}
                         </li>
 
-                        <li>
+                        <li v-show="false">
                             <strong>getStartingIndexForPage: </strong>
                             {{ getStartingIndexForPage }}
                         </li>
 
-                        <li>
+                        <li v-show="false">
                             <strong>getIndexRangeForPage: </strong>
                             {{ getIndexRangeForPage }}
                         </li>
 
-                        <li>
+                        <li v-show="false">
                             <strong>indexRange: </strong>
                             {{ indexRange }}
                         </li>
 
-                        <li>
+                        <li v-show="false">
                             <strong>appendToIndexRange: </strong>
                             {{ appendToIndexRange }}
+                        </li>
+                        
+                        <li v-show="true">
+                            <strong>front: </strong>
+                            {{ front }}
+                        </li>
+
+                        <li v-show="true">
+                            <strong>frontBgImg: </strong>
+                            {{ frontBgImg }}
                         </li>
                     </ul>
                 </div>
@@ -156,7 +166,7 @@ function render_events($filter, $filter_format, $show_more_format, $hide_recurre
                         </ul>
                     </div>
                 </div>
-            </div>         
+            </div>       
 
             <div v-show="showMoreFormat === 'paged'" class="row my-3">
                 <div class="mx-auto">
@@ -222,6 +232,7 @@ function render_events($filter, $filter_format, $show_more_format, $hide_recurre
                 data: {
                     json: <? print json_encode(index_events()) ?>,
                     endDateArray: <? print json_encode(event_end_dates()) ?>,
+                    
                     currentFilter: "",
                     givenFilter: "<?= $filter ?>",
                     uniqueEventIds: [],
@@ -234,6 +245,7 @@ function render_events($filter, $filter_format, $show_more_format, $hide_recurre
                     ],
                     filterFormat: "<?= normalize_string($filter_format) ?>",
                     showMoreFormat: "<?= normalize_string($show_more_format) ?>",
+
                     hideRecurrence: <?= $hide_recurrence ?>,
                     pagination: true,
                     eventsPerPage: <?= $num_events_to_show ?>,
@@ -241,6 +253,9 @@ function render_events($filter, $filter_format, $show_more_format, $hide_recurre
                     currentPageStart: 0,
                     indexRange: [],
                     appendToIndexRange: false,
+
+                    front: <?= $front ?>,
+                    frontBgImg: "<?= plugin_dir_url(__DIR__, 1) . "imgs/knight.jpg"; ?>",
                 },
                 computed: {
                     getCurrentFilter: function() {

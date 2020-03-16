@@ -44,19 +44,19 @@ function events_handler($atts = []) {
     $front = $atts['front'];
 
     // For enabling and disabling dev features and Vuejs modes.
-    $dev = false;
+    $dev = true;
     
-    if ($dev) {
-        // Set dev attributes manually.
-        $filter = $atts['filter'];
+    if ($dev && false) {
+        // // Set dev attributes manually.
+        // $filter = $atts['filter'];
         // $filter_format = 'dropdown';
-        $show_more_format = 'btn';
+        // $show_more_format = 'btn';
         // $hide_recurrence = false;
-        $num_events_to_show = 3;
-        $front = true;
+        // $num_events_to_show = 3;
+        // $front = true;
 
         dev_cont(array(
-            dev_cont_h("Shortcode Attributes"),
+            dev_cont_h("(BEFORE) Shortcode Attributes"),
             tsh("Filter", $filter),
             tsh("Filter format", $filter_format),
             tsh("Show more format", $show_more_format),
@@ -74,6 +74,27 @@ function events_handler($atts = []) {
     // Needed for $hide_recurrence to be processed correctly in JavaScript. PHP renders the false as an empty string otherwise.
     if ($hide_recurrence === false) {
         $hide_recurrence = "false";
+    }
+
+    // If the format is for the CAH front page.
+    if ($front) {
+        $filter_format = "";
+        $show_more_format = "";
+    } else {
+        // Needed to be processed correctly in JavaScript. PHP renders the false as an empty string otherwise.
+        $front = "false";
+    }
+
+    if ($dev) {
+        dev_cont(array(
+            dev_cont_h("(AFTER) Shortcode Attributes"),
+            tsh("Filter", $filter),
+            tsh("Filter format", $filter_format),
+            tsh("Show more format", $show_more_format),
+            tsh("Hide recurrence", $hide_recurrence),
+            tsh("Number of events to show", $num_events_to_show),
+            tsh("Front", $front),
+        ));
     }
 
     ob_start();
