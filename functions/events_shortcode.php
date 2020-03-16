@@ -24,9 +24,9 @@
         - false
 */
 
-add_shortcode('dev-events', 'dev_events_handler');
+add_shortcode('events', 'events_handler');
 
-function dev_events_handler($atts = []) {
+function events_handler($atts = []) {
     $attributes = shortcode_atts([
         'filter' => 'all',
         'filter-format' => '',
