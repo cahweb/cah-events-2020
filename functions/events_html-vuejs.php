@@ -135,7 +135,7 @@ function render_events($filter, $filter_format, $show_more_format, $hide_recurre
                                         >
                                             <li class="cah-event-item-dark">
                                                 <p name="date-range" class="h5 text-primary cah-event-item-date font-weight-normal">
-                                                    {{ printDate(event, hideRecurrence, endDateArray) }}, {{ printTime(event.starts) }} &ndash; {{ printTime(event.ends) }} 
+                                                    {{ printDate(event, hideRecurrence, endDateArray) }}<span v-show="printTime(event.starts) !== false" >, {{ printTime(event.starts) }} &ndash; {{ printTime(event.ends) }}</span>
                                                 </p>
 
                                                 <p name="title" class="h5 my-3 text-inverse font-weight-normal">
@@ -196,7 +196,7 @@ function render_events($filter, $filter_format, $show_more_format, $hide_recurre
                                 >
                                     <li class="cah-event-item-light">
                                         <p name="date-range" class="h5 text-primary cah-event-item-date">
-                                            {{ printDate(event, hideRecurrence, endDateArray) }}, {{ printTime(event.starts) }} &ndash; {{ printTime(event.ends) }} 
+                                            {{ printDate(event, hideRecurrence, endDateArray) }}<span v-show="printTime(event.starts) !== false" >, {{ printTime(event.starts) }} &ndash; {{ printTime(event.ends) }}</span>
                                         </p>
 
                                         <p name="title" class="h5 text-secondary">
@@ -487,6 +487,10 @@ function render_events($filter, $filter_format, $show_more_format, $hide_recurre
                             } else {
                                 timePeriod = " a.m."
                             }
+                        }
+
+                        if (hour === 0) {
+                            return false
                         }
 
                         if (minutes === 0) {
