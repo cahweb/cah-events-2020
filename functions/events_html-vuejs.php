@@ -263,8 +263,8 @@ function render_events($filter, $filter_format, $show_more_format, $hide_recurre
 
         <?
             if ($dev) {
-            // Most up-to-date production version of Vue.js.
-            echo '<script src="https://unpkg.com/vue"></script>';
+            // Most up-to-date developer version of Vue.js.
+            echo '<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>';
             } else {
             // Production version 2.6.11.
             echo '<script src="https://cdn.jsdelivr.net/npm/vue@2.6.11"></script>';
