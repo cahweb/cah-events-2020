@@ -124,7 +124,7 @@ function render_events($filter, $filter_format, $show_more_format, $hide_recurre
                     <div class="container p-0">
                         <h1 class="text-inverse mb-4">Events</h1>
 
-                        <div class="d-flex flex-column">
+                        <div v-show="filteredEvents.length > 0" class="d-flex flex-column">
                             <div class="mx-auto">
                                 <section class="mt-0 col-lg-8 p-0">
                                     <ul class="list-unstyled">
@@ -146,74 +146,85 @@ function render_events($filter, $filter_format, $show_more_format, $hide_recurre
                                             </li>
                                         </a>
                                     </ul>
+
                                 </section>
+                            </div>
+                            
+                            <div v-show="filteredEvents.length === 0" class="mb-4">
+                                <p style="color: #d3d6db"><em>There are currently no upcoming events.</em></p>
                             </div>
                         </div>
 
-                        <a href="https://events.ucf.edu/calendar/3611/cah-events/upcoming/" class="btn btn-primary mt-3">More Events</a>
+                        <a href="https://events.ucf.edu/calendar/3611/cah-events/upcoming/" class="btn btn-primary mt-3">More Event Information</a>
                     </div>
                 </div>
             </div>
 
             <div v-else>
-                <div v-if="filterFormat === 'dropdown'" class="dropdown my-4 mx-auto" style="width: 35%;">
-                    <a v-if="currentFilter === ''" class="btn btn-primary dropdown-toggle w-100" href="#" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        {{ getCurrentFilter }}
-                    </a>
-                    <a v-else class="btn btn-primary dropdown-toggle w-100" href="#" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        {{ currentFilter }}
-                    </a>
+                <div v-show="filteredEvents.length !== 0">
+                    <div v-if="filterFormat === 'dropdown'" class="dropdown my-4 mx-auto" style="width: 35%;">
+                        <a v-if="currentFilter === ''" class="btn btn-primary dropdown-toggle w-100" href="#" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            {{ getCurrentFilter }}
+                        </a>
+                        <a v-else class="btn btn-primary dropdown-toggle w-100" href="#" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            {{ currentFilter }}
+                        </a>
 
-                    <div class="dropdown-menu w-100" aria-labelledby="dropdownMenuLink">
-                        <button class="dropdown-item cah-event-filter-button"
-                            v-for="filter in filters"
-                            v-bind:disabled="isCurrentFilter(currentFilter, givenFilter, filter)"
-                            v-on:click="currentFilter = filter; currentPage = 1"
-                        >
-                            {{ filter }}
-                        </button>
-                    </div>
-                </div>
-
-                <div v-else class="d-flex flex-column">
-                    <div v-bind:class="[filterFormat === 'list' ? 'row justify-content-between' : '']">
-                        <div v-show="filterFormat === 'list'" class="col-sm-2 my-3">
-                            <button class="list-group-item list-group-item-action cah-event-filter-button"
+                        <div class="dropdown-menu w-100" aria-labelledby="dropdownMenuLink">
+                            <button class="dropdown-item cah-event-filter-button"
                                 v-for="filter in filters"
-                                v-bind:class="isCurrentFilter(currentFilter, givenFilter, filter) ? 'active' : ''"
-                                v-on:click="currentFilter = filter; currentPage = 1; indexRange = []; appendToIndexRange = false"
+                                v-bind:disabled="isCurrentFilter(currentFilter, givenFilter, filter)"
+                                v-on:click="currentFilter = filter; currentPage = 1"
                             >
                                 {{ filter }}
                             </button>
                         </div>
+                    </div>
 
-                        <div v-bind:class="[filterFormat === 'list' ? 'col-sm-9' : '']">
-                            <ul class="list-unstyled">
-                                <a class="cah-event-item"
-                                    v-for="(event, index) in filteredEvents"
-                                    v-bind:href="event.url"
-                                    v-show="pageShow(index, getIndexRangeForPage)"
+                    <div v-else class="d-flex flex-column">
+                        <div v-bind:class="[filterFormat === 'list' ? 'row justify-content-between' : '']">
+                            <div v-show="filterFormat === 'list'" class="col-sm-2 my-3">
+                                <button class="list-group-item list-group-item-action cah-event-filter-button"
+                                    v-for="filter in filters"
+                                    v-bind:class="isCurrentFilter(currentFilter, givenFilter, filter) ? 'active' : ''"
+                                    v-on:click="currentFilter = filter; currentPage = 1; indexRange = []; appendToIndexRange = false"
                                 >
-                                    <li class="cah-event-item-light">
-                                        <p name="date-range" class="h5 text-primary cah-event-item-date">
-                                            {{ printDate(event, hideRecurrence, endDateArray) }}<span v-show="printTime(event.starts) !== false" >, {{ printTime(event.starts) }} &ndash; {{ printTime(event.ends) }}</span>
-                                        </p>
+                                    {{ filter }}
+                                </button>
+                            </div>
 
-                                        <p name="title" class="h5 text-secondary">
-                                            {{ event.title }}
-                                        </p>
+                            <div v-bind:class="[filterFormat === 'list' ? 'col-sm-9' : '']">
+                                <ul class="list-unstyled">
+                                    <a class="cah-event-item"
+                                        v-for="(event, index) in filteredEvents"
+                                        v-bind:href="event.url"
+                                        v-show="pageShow(index, getIndexRangeForPage)"
+                                    >
+                                        <li class="cah-event-item-light">
+                                            <p name="date-range" class="h5 text-primary cah-event-item-date">
+                                                {{ printDate(event, hideRecurrence, endDateArray) }}<span v-show="printTime(event.starts) !== false" >, {{ printTime(event.starts) }} &ndash; {{ printTime(event.ends) }}</span>
+                                            </p>
 
-                                        <p name="description" class="mb-0 text-muted" v-html="printDescription(event.description)"></p>
-                                    </li>
-                                </a>
-                            </ul>
+                                            <p name="title" class="h5 text-secondary">
+                                                {{ event.title }}
+                                            </p>
+
+                                            <p name="description" class="mb-0 text-muted" v-html="printDescription(event.description)"></p>
+                                        </li>
+                                    </a>
+                                </ul>
+                            </div>
                         </div>
                     </div>
-                </div>       
+                </div>
+
+                <div v-show="filteredEvents.length === 0" class="mb-4 text-center">
+                    <p class="py-3"><em>There are currently no upcoming events.</em></p>
+                </div>
             </div>
 
 
-            <div v-show="showMoreFormat === 'paged'" class="row my-3">
+            <div v-show="showMoreFormat === 'paged' && filteredEvents.length !== 0" class="row my-3">
                 <div class="mx-auto">
                     <nav aria-label="page-navigation">
                         <ul class="pagination justify-content-center">
@@ -249,7 +260,7 @@ function render_events($filter, $filter_format, $show_more_format, $hide_recurre
                 </div>
             </div>
 
-            <div v-show="showMoreFormat === 'btn' || showMoreFormat === 'button'" class="row my-3">
+            <div v-show="(showMoreFormat === 'btn' || showMoreFormat === 'button') && filteredEvents.length !== 0" class="row my-3">
                 <div class="mx-auto">
                     <button class="btn btn-primary"
                         v-bind:disabled="filteredEvents.length - 1 <= indexRange.slice(-1)[0]"
