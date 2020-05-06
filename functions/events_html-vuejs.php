@@ -161,7 +161,7 @@ function render_events($filter, $filter_format, $show_more_format, $hide_recurre
             </div>
 
             <div v-else>
-                <div v-show="filteredEvents.length !== 0">
+                <div v-if="filteredEvents.length !== 0">
                     <div v-if="filterFormat === 'dropdown'" class="dropdown my-4 mx-auto" style="width: 35%;">
                         <a v-if="currentFilter === ''" class="btn btn-primary dropdown-toggle w-100" href="#" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             {{ getCurrentFilter }}
@@ -183,7 +183,7 @@ function render_events($filter, $filter_format, $show_more_format, $hide_recurre
 
                     <div v-else class="d-flex flex-column">
                         <div v-bind:class="[filterFormat === 'list' ? 'row justify-content-between' : '']">
-                            <div v-show="filterFormat === 'list'" class="col-sm-2 my-3">
+                            <div v-if="filterFormat === 'list'" class="col-sm-2 my-3">
                                 <button class="list-group-item list-group-item-action cah-event-filter-button"
                                     v-for="filter in filters"
                                     v-bind:class="isCurrentFilter(currentFilter, givenFilter, filter) ? 'active' : ''"
@@ -218,13 +218,13 @@ function render_events($filter, $filter_format, $show_more_format, $hide_recurre
                     </div>
                 </div>
 
-                <div v-show="filteredEvents.length === 0" class="mb-4 text-center">
+                <div v-if="filteredEvents.length === 0" class="mb-4">
                     <p class="py-3"><em>There are currently no upcoming events.</em></p>
                 </div>
             </div>
 
 
-            <div v-show="showMoreFormat === 'paged' && filteredEvents.length !== 0" class="row my-3">
+            <div v-if="showMoreFormat === 'paged' && filteredEvents.length !== 0" class="row my-3 mx-0">
                 <div class="mx-auto">
                     <nav aria-label="page-navigation">
                         <ul class="pagination justify-content-center">
@@ -260,7 +260,7 @@ function render_events($filter, $filter_format, $show_more_format, $hide_recurre
                 </div>
             </div>
 
-            <div v-show="(showMoreFormat === 'btn' || showMoreFormat === 'button') && filteredEvents.length !== 0" class="row my-3">
+            <div v-if="(showMoreFormat === 'btn' || showMoreFormat === 'button') && filteredEvents.length !== 0" class="row my-3 mx-0">
                 <div class="mx-auto">
                     <button class="btn btn-primary"
                         v-bind:disabled="filteredEvents.length - 1 <= indexRange.slice(-1)[0]"
@@ -268,6 +268,12 @@ function render_events($filter, $filter_format, $show_more_format, $hide_recurre
                     >
                         Show More
                     </button>
+                </div>
+            </div>
+
+            <div v-if="(showMoreFormat === 'btn-external' || showMoreFormat === 'button-external')" class="row my-3 mx-0">
+                <div>
+                    <a class="btn btn-primary" href="//events.ucf.edu/calendar/3497/visual-arts-and-design/upcoming/">More Event Information</a>
                 </div>
             </div>
         </div>
