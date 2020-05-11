@@ -41,11 +41,16 @@ function render_events($filter, $filter_format, $show_more_format, $hide_recurre
 
                     <ul class="mb-0">
                         <li v-show="true">
-                            <strong>index_events() array: </strong>
-                            <?= (empty(index_events())) ? "is empty" : "is not empty" ?>
+                            <strong>$dev: </strong>
+                            <?= ($dev) ? "true" : "false" ?>
                         </li>
 
                         <li v-show="false">
+                            <strong>json: </strong>
+                            {{ (json.length > 0) ? "not empty" : "empty" }}
+                        </li>
+
+                        <li v-show="true">
                             <strong>currentFilter: </strong>
                             {{ currentFilter }}
                         </li>
@@ -140,7 +145,7 @@ function render_events($filter, $filter_format, $show_more_format, $hide_recurre
                                         >
                                             <li class="cah-event-item-dark">
                                                 <p name="date-range" class="h5 text-primary cah-event-item-date font-weight-normal">
-                                                    {{ printDate(event, hideRecurrence, endDateArray) }}<span v-show="printTime(event.starts) !== false" >, {{ printTime(event.starts) }} &ndash; {{ printTime(event.ends) }}</span>
+                                                    {{ printDate(event, hideRecurrence, endDateArray) }}<span v-if="printTime(event.starts) !== false" >, {{ printTime(event.starts) }} &ndash; {{ printTime(event.ends) }}</span>
                                                 </p>
 
                                                 <p name="title" class="h5 my-3 text-inverse font-weight-normal">
@@ -166,7 +171,7 @@ function render_events($filter, $filter_format, $show_more_format, $hide_recurre
             </div>
 
             <div v-else>
-                <div v-if="filteredEvents.length !== 0">
+                <div>
                     <div v-if="filterFormat === 'dropdown'" class="dropdown my-4 mx-auto" style="width: 35%;">
                         <a v-if="currentFilter === ''" class="btn btn-primary dropdown-toggle w-100" href="#" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             {{ getCurrentFilter }}
@@ -199,7 +204,11 @@ function render_events($filter, $filter_format, $show_more_format, $hide_recurre
                             </div>
 
                             <div v-bind:class="[filterFormat === 'list' ? 'col-sm-9' : '']">
-                                <ul class="list-unstyled">
+                                <div v-if="filteredEvents.length === 0" class="my-4">
+                                    <p v-if="currentFilter === '' || currentFilter === 'All'" class="py-3"><em>There are currently no upcoming events.</em></p>
+                                    <p v-else class="py-3"><em>There are currently no upcoming events for {{ currentFilter }}.</em></p>
+                                </div>
+                                <ul v-else class="list-unstyled">
                                     <a class="cah-event-item"
                                         v-for="(event, index) in filteredEvents"
                                         v-bind:href="event.url"
@@ -207,7 +216,7 @@ function render_events($filter, $filter_format, $show_more_format, $hide_recurre
                                     >
                                         <li class="cah-event-item-light">
                                             <p name="date-range" class="h5 text-primary cah-event-item-date">
-                                                {{ printDate(event, hideRecurrence, endDateArray) }}<span v-show="printTime(event.starts) !== false" >, {{ printTime(event.starts) }} &ndash; {{ printTime(event.ends) }}</span>
+                                                {{ printDate(event, hideRecurrence, endDateArray) }}<span v-if="printTime(event.starts) !== false" >, {{ printTime(event.starts) }} &ndash; {{ printTime(event.ends) }}</span>
                                             </p>
 
                                             <p name="title" class="h5 text-secondary">
@@ -221,10 +230,6 @@ function render_events($filter, $filter_format, $show_more_format, $hide_recurre
                             </div>
                         </div>
                     </div>
-                </div>
-
-                <div v-if="filteredEvents.length === 0" class="mb-4">
-                    <p class="py-3"><em>There are currently no upcoming events.</em></p>
                 </div>
             </div>
 
@@ -297,7 +302,7 @@ function render_events($filter, $filter_format, $show_more_format, $hide_recurre
             new Vue({
                 el: "#app",
                 data: {
-                    json: <? print json_encode(index_events()) ?>,
+                    json: <? ($dev) ? print json_encode(dev_index_events()) : print json_encode(index_events()) ?>,
                     endDateArray: <? print json_encode(event_end_dates()) ?>,
                     
                     currentFilter: "",
@@ -370,7 +375,13 @@ function render_events($filter, $filter_format, $show_more_format, $hide_recurre
                             if (normalizedCurrentFilter === "" || normalizedCurrentFilter === "all") {
                                 return true
                             } else {
-                                if (normalizedCurrentFilter === normalizedEventFilter) {
+                                // if (normalizedCurrentFilter === normalizedEventFilter) {
+                                //     return true
+                                // } else {
+                                //     return false
+                                // }
+
+                                if (normalizedEventFilter.includes(normalizedCurrentFilter)) {
                                     return true
                                 } else {
                                     return false
@@ -454,8 +465,18 @@ function render_events($filter, $filter_format, $show_more_format, $hide_recurre
                         var year = d.toLocaleDateString('en-US', { year: 'numeric' })
                         
                         var formattedDate = ""
+
+                        function testEventRecurrence(event_id, endDateArray) {
+                            for (var i = 0; i < endDateArray.length; i++) {
+                                if (event_id === endDateArray[i].event_id) {
+                                    return true
+                                }
+                            }
+
+                            return false
+                        }
                         
-                        if (hideRecurrence) {
+                        if (testEventRecurrence(date.event_id, endDateArray)) {
                             function printEndDate(event_id, endDateArray) {
                                 for (var i = 0; i < endDateArray.length; i++) {
                                     if (event_id === endDateArray[i].event_id) {
@@ -471,7 +492,7 @@ function render_events($filter, $filter_format, $show_more_format, $hide_recurre
                             var endMonth = endDate.toLocaleDateString('en-US', { month: 'long' })
                             var endDay = endDate.toLocaleDateString('en-US', { day: 'numeric' })
                             var endYear = endDate.toLocaleDateString('en-US', { year: 'numeric' })
-                            
+
                             if (endYear === year) {
                                 if (endMonth === month) {
                                     if (endDay === day) {
