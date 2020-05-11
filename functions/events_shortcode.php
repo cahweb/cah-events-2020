@@ -28,6 +28,7 @@ add_shortcode('events', 'events_handler');
 
 function events_handler($atts = []) {
     $attributes = shortcode_atts([
+        'dev' => 'false',
         'filter' => 'all',
         'filter-format' => '',
         'show-more-format' => '',
@@ -44,7 +45,8 @@ function events_handler($atts = []) {
     $front = $atts['front'];
 
     // For enabling and disabling dev features and Vuejs modes.
-    $dev = false;
+    // $dev = false;
+    $dev = $atts['dev'];
     
     if ($dev) {
         // // Set dev attributes manually.

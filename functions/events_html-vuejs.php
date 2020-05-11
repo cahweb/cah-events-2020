@@ -40,6 +40,11 @@ function render_events($filter, $filter_format, $show_more_format, $hide_recurre
                     <hr>
 
                     <ul class="mb-0">
+                        <li v-show="true">
+                            <strong>index_events() array: </strong>
+                            <?= (empty(index_events())) ? "is empty" : "is not empty" ?>
+                        </li>
+
                         <li v-show="false">
                             <strong>currentFilter: </strong>
                             {{ currentFilter }}
