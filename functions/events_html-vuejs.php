@@ -303,7 +303,7 @@ function render_events($filter, $filter_format, $show_more_format, $hide_recurre
                 el: "#app",
                 data: {
                     json: <? ($dev) ? print json_encode(dev_index_events()) : print json_encode(index_events()) ?>,
-                    endDateArray: <? print json_encode(event_end_dates()) ?>,
+                    endDateArray: <? print json_encode(event_end_dates($dev)) ?>,
                     
                     currentFilter: "",
                     givenFilter: "<?= $filter ?>",

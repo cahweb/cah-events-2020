@@ -110,7 +110,7 @@ function dev_index_events() {
 }
 
 // Helper function for event_end_dates(). Returns an array of every unique event id.
-function get_unique_event_ids() {
+function get_unique_event_ids($dev) {
     if ($dev) {
         $original_events_array = dev_index_events();
     } else {
@@ -135,13 +135,13 @@ function get_unique_event_ids() {
 }
 
 // Indexes each unique event and their end dates if they occur multiple times.
-function event_end_dates() {
+function event_end_dates($dev) {
     if ($dev) {
         $original_events_array = dev_index_events();
     } else {
         $original_events_array = index_events();
     }
-    $unique_event_ids = get_unique_event_ids();
+    $unique_event_ids = get_unique_event_ids($dev);
     $ids_end_dates = array();
     
     if (!empty($unique_event_ids)) {
