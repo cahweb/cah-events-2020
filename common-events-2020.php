@@ -19,7 +19,7 @@ include "functions/events_html-vuejs.php";
 
 // Developer functions for testing and debugging.
 // NOTE: This is active wherever the plugin is used.
-include "functions/dev.php";
+// include "functions/dev.php";
 
 // Custom styles.
 wp_enqueue_style('events-styles', plugin_dir_url( __FILE__ ) . '/styles/events.css');

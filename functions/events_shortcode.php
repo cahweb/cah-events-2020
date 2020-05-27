@@ -47,6 +47,10 @@ function events_handler($atts = []) {
     // For enabling and disabling dev features and Vuejs modes.
     // $dev = false;
     $dev = $atts['dev'];
+    // Convert the string: "false", to a boolean.
+    if ($dev === "false") {
+        $dev = false;
+    }
     
     if ($dev) {
         // // Set dev attributes manually.

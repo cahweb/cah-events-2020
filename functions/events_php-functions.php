@@ -19,55 +19,6 @@ function index_events() {
     // Tracks if this is the initial loop where date looping would not apply.
     $i = 0;
 
-    $path = "https://events.ucf.edu/calendar/4310/arts-at-ucf/";
-    
-    // Initializes the conditional below. It's repeated again to output the correct path.
-    $events_json_contents = json_decode(file_get_contents($path . date_format($current_year, 'Y') . "/" . date_format($current_month, 'n') . "/" . "feed.json"));
-
-    while (!empty($events_json_contents)) {
-        // Loop around to next year if the current month is December and the loop as already gone through once.
-        if ($i > 0) {
-            if (date_format($current_month, 'n') == 12) {
-                $current_year->modify("+1 year");
-            }
-
-            // This just for readability's sake
-            $Y = date_format( $current_month, 'Y' );
-            $m = date_format( $current_month, 'm' ) + 1;
-            $d = date_format( $current_month, 'd' ) >= 28 ? 28 : date_format( $current_month, 'd' );
-
-            $current_month = date_create_from_format( 'Y-m-d', "$Y-$m-$d" );
-        }
-
-        // Not DRY, I know.
-        $events_json_contents = json_decode(file_get_contents($path . date_format($current_year, 'Y') . "/" . date_format($current_month, 'n') . "/" . "feed.json"));
-
-        foreach ($events_json_contents as $event) {
-            // The date/time when each event ends.
-            $end = strtotime($event->ends);
-            
-            // Ensures that the events are active or upcoming:
-            if ($end >= time()) {
-                $event->filtered_category = strtolower(parse_event_category($event->tags));
-                array_push($events, $event);
-            }
-        }
-
-        $i++;
-    }
-
-    return $events;
-}
-
-function dev_index_events() {
-    $events = array();
-
-    $current_year = date_create('Y');
-    $current_month = date_create('m');
-
-    // Tracks if this is the initial loop where date looping would not apply.
-    $i = 0;
-
     $path = "https://events.ucf.edu/calendar/3611/cah-events/";
     
     // Initializes the conditional below. It's repeated again to output the correct path.
@@ -97,10 +48,10 @@ function dev_index_events() {
             $start = strtotime($event->starts);
             
             // Ensures that the events are active or upcoming:
-            // if ($end >= time()) {
+            if ($end >= time()) {
                 $event->filtered_category = strtolower(parse_event_category($event->tags));
                 array_push($events, $event);
-            // }
+            }
         }
 
         $i++;
@@ -110,12 +61,8 @@ function dev_index_events() {
 }
 
 // Helper function for event_end_dates(). Returns an array of every unique event id.
-function get_unique_event_ids($dev) {
-    if ($dev) {
-        $original_events_array = dev_index_events();
-    } else {
-        $original_events_array = index_events();
-    }
+function get_unique_event_ids() {
+    $original_events_array = index_events();
     $unique_events = array();
     $unique_event_ids = array();
     
@@ -135,12 +82,8 @@ function get_unique_event_ids($dev) {
 }
 
 // Indexes each unique event and their end dates if they occur multiple times.
-function event_end_dates($dev) {
-    if ($dev) {
-        $original_events_array = dev_index_events();
-    } else {
-        $original_events_array = index_events();
-    }
+function event_end_dates() {
+    $original_events_array = index_events();
     $unique_event_ids = get_unique_event_ids($dev);
     $ids_end_dates = array();
     
