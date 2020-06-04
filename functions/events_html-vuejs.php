@@ -23,6 +23,14 @@
         - running it in Guest mode with no extensions,
         - wating a while before refreshing,
         - or check in Firefox, as I don't seem to have a problem there.
+
+    -----------
+       NOTES   
+    -----------
+    - Added automagic text color inversion if the app is inside a .bg-inverse element, through the
+        isLight computed property. Also added v-bind:classes to reflect these conditional changes in
+        the inner <li> and <p> elements of the event entries. If all this is to your liking, feel free
+        to merge this branch into all-cah  - M.L.
 */
 
 function render_events($filter, $filter_format, $show_more_format, $hide_recurrence, $num_events_to_show, $dev, $front) {
@@ -214,16 +222,16 @@ function render_events($filter, $filter_format, $show_more_format, $hide_recurre
                                         v-bind:href="event.url"
                                         v-show="pageShow(index, getIndexRangeForPage)"
                                     >
-                                        <li class="cah-event-item-light">
+                                        <li :class="isLight ? 'cah-event-item-light' : 'cah-event-item-dark'">
                                             <p name="date-range" class="h5 text-primary cah-event-item-date">
                                                 {{ printDate(event, hideRecurrence, endDateArray) }}<span v-if="printTime(event.starts) !== false" >, {{ printTime(event.starts) }} &ndash; {{ printTime(event.ends) }}</span>
                                             </p>
 
-                                            <p name="title" class="h5 text-secondary">
+                                            <p name="title" class="h5" :class="isLight ? 'text-secondary' : 'text-inverse'">
                                                 {{ event.title }}
                                             </p>
 
-                                            <p name="description" class="mb-0 text-muted" v-html="printDescription(event.description)"></p>
+                                            <p name="description" class="mb-0" :class="isLight ? 'text-muted' : 'text-inverse font-weight-light'" v-html="printDescription(event.description)"></p>
                                         </li>
                                     </a>
                                 </ul>
@@ -299,7 +307,7 @@ function render_events($filter, $filter_format, $show_more_format, $hide_recurre
         ?>
 
         <script>
-            new Vue({
+            const v = new Vue({
                 el: "#app",
                 data: {
                     json: <? print json_encode(index_events()) ?>,
@@ -433,7 +441,17 @@ function render_events($filter, $filter_format, $show_more_format, $hide_recurre
                         }
 
                         return indexRange
-                    }
+                    },
+                    isLight() {
+                        // Finds out if there's a .bg-inverse somewhere in the app's parentage, so we can apply a conditional
+                        // class to <li> elements.
+                        const app = document.querySelector('#app')
+                        const inverseParent = app.closest('.bg-inverse')
+                        if (inverseParent === null ) {
+                            return true
+                        }
+                        return false
+                    },
                 },
                 methods : {
                     printDescription: function(description) {
