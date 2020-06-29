@@ -33,7 +33,7 @@
         to merge this branch into all-cah  - M.L.
 */
 
-function render_events($filter, $filter_format, $show_more_format, $hide_recurrence, $num_events_to_show, $dev, $front) {
+function render_events($filter, $filter_format, $show_more_format, $hide_recurrence, $num_events_to_show, $dev, $front, $show_all_when_none) {
 
     ?>
 
@@ -63,7 +63,7 @@ function render_events($filter, $filter_format, $show_more_format, $hide_recurre
                             {{ currentFilter }}
                         </li>
 
-                        <li v-show="false">
+                        <li v-show="true">
                             <strong>givenFilter: </strong>
                             {{ givenFilter }}
                         </li>
@@ -169,7 +169,7 @@ function render_events($filter, $filter_format, $show_more_format, $hide_recurre
                             </div>
                             
                             <div v-show="filteredEvents.length === 0" class="mb-4">
-                                <p style="color: #d3d6db"><em>There are currently no upcoming events.</em></p>
+                                <p style="color: #d3d6db" class="font-serif font-style-italic">There are currently no upcoming events.</p>
                             </div>
                         </div>
 
@@ -212,11 +212,10 @@ function render_events($filter, $filter_format, $show_more_format, $hide_recurre
                             </div>
 
                             <div v-bind:class="[filterFormat === 'list' ? 'col-sm-9' : '']">
-                                <div v-if="filteredEvents.length === 0" class="my-4">
-                                    <p v-if="currentFilter === '' || currentFilter === 'All'" class="py-3"><em>There are currently no upcoming events.</em></p>
-                                    <p v-else class="py-3"><em>There are currently no upcoming events for {{ currentFilter }}.</em></p>
+                                <div v-if="filteredEvents.length === 0 || <? if ($show_all_when_none) { echo "true"; } else { echo "false"; } ?>" class="mb-3">
+                                    <p class="font-serif" style="font-style: italic">There are currently no upcoming events<span v-if="givenFilter !== '' && currentFilter === '' && currentFilter !== 'All'"> for {{ getCurrentFilter }}</span><span v-else> for {{ currentFilter }}</span>. <? if ($show_all_when_none) { echo "Check out these events from the UCF College of Arts and Humanities."; } ?></p>
                                 </div>
-                                <ul v-else class="list-unstyled">
+                                <ul v-if="filteredEvents.length > 0 || <? if ($show_all_when_none) { echo "true"; } else { echo "false"; } ?>" class="list-unstyled">
                                     <a class="cah-event-item"
                                         v-for="(event, index) in filteredEvents"
                                         v-bind:href="event.url"
@@ -367,6 +366,12 @@ function render_events($filter, $filter_format, $show_more_format, $hide_recurre
                     },
                     filteredEvents: function() {
                         let givenFilter = this.givenFilter
+                        <?
+                            if ($show_all_when_none) {
+                                echo "givenFilter = ''";
+                            }
+                        ?>
+
                         let currentFilter = this.currentFilter
                         let hideRecurrence = this.hideRecurrence
                         

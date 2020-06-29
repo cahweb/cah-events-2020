@@ -35,6 +35,7 @@ function events_handler($atts = []) {
         'hide-recurrence' => false,
         'num-events' => 5,
         'front' => false,
+        'show-all-when-none' => false,
     ], $atts);
 
     $filter = $atts['filter'];
@@ -43,6 +44,7 @@ function events_handler($atts = []) {
     $hide_recurrence = $atts['hide-recurrence'];
     $num_events_to_show = $atts['num-events'];
     $front = $atts['front'];
+    $show_all_when_none = $atts['show-all-when-none'];
 
     // For enabling and disabling dev features and Vuejs modes.
     // $dev = false;
@@ -93,6 +95,14 @@ function events_handler($atts = []) {
         $front = "false";
     }
 
+    // If true, then show all CAH events when current filter has none.
+    if ($show_all_when_none) {
+        $filter_format = "";
+        $show_more_format = "";
+    } else {
+        $show_all_when_none = false;
+    }
+
     if ($dev && false) {
         dev_cont(array(
             dev_cont_h("(AFTER) Shortcode Attributes"),
@@ -107,7 +117,7 @@ function events_handler($atts = []) {
 
     ob_start();
 
-    render_events($filter, $filter_format, $show_more_format, $hide_recurrence, $num_events_to_show, $dev, $front);
+    render_events($filter, $filter_format, $show_more_format, $hide_recurrence, $num_events_to_show, $dev, $front, $show_all_when_none);
 
     return ob_get_clean();
 }
