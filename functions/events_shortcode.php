@@ -6,22 +6,7 @@
     -----------------------------
 
     Acts like the "main" function for this plug in.
-
-    Current available options:
-    --------------------------
-    filter-format:
-        - 'dropdown'
-        - 'list'
-        - 'none' (default)
-
-    show-more-format:
-        - 'paged'
-        - 'button' or 'btn'
-        - 'none' (default)
-    
-    front:
-        - true
-        - false
+    See the README for available options.
 */
 
 add_shortcode('events', 'events_handler');
@@ -38,13 +23,36 @@ function events_handler($atts = []) {
         'show-all-when-none' => false,
     ], $atts);
 
-    $filter = $atts['filter'];
-    $filter_format = $atts['filter-format'];
-    $show_more_format = $atts['show-more-format'];
-    $hide_recurrence = $atts['hide-recurrence'];
-    $num_events_to_show = $atts['num-events'];
-    $front = $atts['front'];
-    $show_all_when_none = $atts['show-all-when-none'];
+    $filter = '';
+    $filter_format = '';
+    $show_more_format = '';
+    $hide_recurrence = false;
+    $num_events_to_show = 5;
+    $front = false;
+    $show_all_when_none = false;
+
+    // Really janky way to enforce default values.
+    if ($atts['filter']) {
+        $filter = $atts['filter'];
+    }
+    if ($atts['filter-format']) {
+        $filter_format = $atts['filter-format'];
+    }
+    if ($atts['show-more-format']) {
+        $show_more_format = $atts['show-more-format'];
+    }
+    if ($atts['hide-recurrence']) {
+        $hide_recurrence = $atts['hide-recurrence'];
+    }
+    if ($atts['num-events']) {
+        $num_events_to_show = $atts['num-events'];
+    }
+    if ($atts['front']) {
+        $filter_format = $atts['filter-format'];
+    }
+    if ($atts['show-all-when-none']) {
+        $show_all_when_none = $atts['show-all-when-none'];
+    }
 
     // For enabling and disabling dev features and Vuejs modes.
     // $dev = false;
