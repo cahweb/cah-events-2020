@@ -53,7 +53,7 @@ function render_events($filter, $filter_format, $show_more_format, $hide_recurre
                             <?= ($dev) ? "true" : "false" ?>
                         </li>
 
-                        <li v-show="false">
+                        <li v-show="true">
                             <strong>json: </strong>
                             {{ (json.length > 0) ? "not empty" : "empty" }}
                         </li>
@@ -73,7 +73,7 @@ function render_events($filter, $filter_format, $show_more_format, $hide_recurre
                             {{ uniqueEventIds }}
                         </li>
                         
-                        <li v-show="false">
+                        <li v-show="true">
                             <strong>filterFormat: </strong>
                             {{ filterFormat }}
                         </li>
@@ -199,7 +199,7 @@ function render_events($filter, $filter_format, $show_more_format, $hide_recurre
                         </div>
                     </div>
 
-                    <div v-else class="d-flex flex-column">
+                    <div class="d-flex flex-column">
                         <div v-bind:class="[filterFormat === 'list' ? 'row justify-content-between' : '']">
                             <div v-if="filterFormat === 'list'" class="col-sm-2 my-3">
                                 <button class="list-group-item list-group-item-action cah-event-filter-button"
