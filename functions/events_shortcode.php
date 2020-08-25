@@ -41,16 +41,16 @@ function events_handler($atts = []) {
     if ($atts['show-more-format']) {
         $show_more_format = $atts['show-more-format'];
     }
-    if ($atts['hide-recurrence']) {
+    if ($atts['hide-recurrence'] && $atts['hide-recurrence'] === "true") {
         $hide_recurrence = $atts['hide-recurrence'];
     }
     if ($atts['num-events']) {
         $num_events_to_show = $atts['num-events'];
     }
-    if ($atts['front']) {
+    if ($atts['front'] && $atts['front'] === "true") {
         $filter_format = $atts['filter-format'];
     }
-    if ($atts['show-all-when-none']) {
+    if ($atts['show-all-when-none'] && $atts['show-all-when-none'] === "true") {
         $show_all_when_none = $atts['show-all-when-none'];
     }
 
