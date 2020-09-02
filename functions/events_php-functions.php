@@ -50,6 +50,7 @@ function index_events() {
             // Ensures that the events are active or upcoming:
             if ($end >= time()) {
                 $event->filtered_category = strtolower(parse_event_category($event->tags));
+                $event->filtered_categories = parse_event_categories($event->tags);
                 array_push($events, $event);
             }
         }
@@ -136,6 +137,32 @@ function parse_event_category($tags) {
         }
     }
     
+}
+
+function parse_event_categories($tags) {
+    $categories = array();
+
+    if (!empty($tags)) {
+        foreach ($tags as $tag) {
+            if (strtolower($tag) == "music") {
+                array_push($categories, "Music");
+            }
+            
+            if (strpos(strtolower($tag), "theatre") !== false) {
+                array_push($categories, "Theatre");
+            }
+
+            if (strpos(strtolower($tag), "gallery") !== false) {
+                array_push($categories, "Gallery");
+            }
+
+            if (strpos(strtolower($tag), "visual") !== false || strpos(strtolower($tag), "svad") !== false) {
+                array_push($categories, "SVAD");
+            }
+        }
+    }
+
+    return $categories;
 }
 
 // Normalizes strings by removing spaces and converting to lowercase to make comparisons easier.
