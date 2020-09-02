@@ -162,7 +162,7 @@ function parse_event_categories($tags) {
         }
     }
 
-    return $categories;
+    return array_unique($categories);
 }
 
 // Normalizes strings by removing spaces and converting to lowercase to make comparisons easier.
