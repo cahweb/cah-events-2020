@@ -152,7 +152,7 @@ function parse_event_categories($tags) {
                 array_push($categories, "Theatre");
             }
 
-            if (strpos(strtolower($tag), "gallery") !== false) {
+            if (strpos(strtolower($tag), "gallery") !== false || strpos(strtolower($tag), "exhibit") !== false) {
                 array_push($categories, "Gallery");
             }
 
