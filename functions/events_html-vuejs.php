@@ -375,10 +375,9 @@ function render_events($filter, $filter_format, $show_more_format, $hide_recurre
                         let currentFilter = this.currentFilter
                         let hideRecurrence = this.hideRecurrence
                         
-                        function filterShow(givenFilter, currentFilter, eventFilter) {
+                        function filterShow(givenFilter, currentFilter, eventFilters) {
                             normalizedGivenFilter = givenFilter.toLowerCase().trim()
                             normalizedCurrentFilter = currentFilter.toLowerCase().trim()
-                            normalizedEventFilter = eventFilter.toLowerCase().trim()
 
                             // Takes into account the given preferred filter in the Wordpress shortcode.
                             if (normalizedGivenFilter !== "" && normalizedCurrentFilter === "") {
@@ -388,29 +387,24 @@ function render_events($filter, $filter_format, $show_more_format, $hide_recurre
                             if (normalizedCurrentFilter === "" || normalizedCurrentFilter === "all") {
                                 return true
                             } else {
-                                // if (normalizedCurrentFilter === normalizedEventFilter) {
-                                //     return true
-                                // } else {
-                                //     return false
-                                // }
-
-                                if (normalizedEventFilter.includes(normalizedCurrentFilter)) {
-                                    return true
-                                } else {
-                                    return false
+                                for (let i = 0; i < eventFilters.length; i++) {
+                                    if (eventFilters[i].toLowerCase().trim() === normalizedCurrentFilter) {
+                                        return true
+                                    }
                                 }
+                                return false;
                             }
                         }
 
                         if (hideRecurrence) {
                             return this.noRepeatedEvents.filter(function (event) {
-                                if (filterShow(givenFilter, currentFilter, event.filtered_category)) {
+                                if (filterShow(givenFilter, currentFilter, Object.values(event.filtered_categories))) {
                                     return event
                                 }
                             })
                         } else {
                             return this.json.filter(function (event) {
-                                if (filterShow(givenFilter, currentFilter, event.filtered_category)) {
+                                if (filterShow(givenFilter, currentFilter, Object.values(event.filtered_categories))) {
                                     return event
                                 }
                             })
