@@ -33,25 +33,25 @@ function events_handler($atts = []) {
 
     // Really janky way to enforce default values.
     if ($atts['filter']) {
-        $filter = $atts['filter'];
+        $filter = strtolower($atts['filter']);
     }
     if ($atts['filter-format']) {
-        $filter_format = $atts['filter-format'];
+        $filter_format = strtolower($atts['filter-format']);
     }
     if ($atts['show-more-format']) {
-        $show_more_format = $atts['show-more-format'];
+        $show_more_format = strtolower($atts['show-more-format']);
     }
-    if ($atts['hide-recurrence'] && $atts['hide-recurrence'] === "true") {
-        $hide_recurrence = $atts['hide-recurrence'];
+    if ($atts['hide-recurrence'] && strtolower($atts['hide-recurrence']) === "true") {
+        $hide_recurrence = strtolower($atts['hide-recurrence']);
     }
     if ($atts['num-events']) {
-        $num_events_to_show = $atts['num-events'];
+        $num_events_to_show = strtolower($atts['num-events']);
     }
-    if ($atts['front'] && $atts['front'] === "true") {
-        $filter_format = $atts['filter-format'];
+    if ($atts['front'] && strtolower($atts['front']) === "true") {
+        $filter_format = strtolower($atts['filter-format']);
     }
-    if ($atts['show-all-when-none'] && $atts['show-all-when-none'] === "true") {
-        $show_all_when_none = $atts['show-all-when-none'];
+    if ($atts['show-all-when-none'] && strtolower($atts['show-all-when-none']) === "true") {
+        $show_all_when_none = strtolower($atts['show-all-when-none']);
     }
 
     // For enabling and disabling dev features and Vuejs modes.
@@ -123,11 +123,23 @@ function events_handler($atts = []) {
         ));
     }
 
-    ob_start();
+    if ($filter === "arts") {
+        if (empty($atts['num-events']) || $num_events_to_show == "all") {
+            $num_events_to_show = -1;
+        }
 
-    render_events($filter, $filter_format, $show_more_format, $hide_recurrence, $num_events_to_show, $dev, $front, $show_all_when_none);
+        ob_start();
+        
+        handle_arts_events($show_more_format, $num_events_to_show);
 
-    return ob_get_clean();
+        return ob_get_clean();
+    } else {
+        ob_start();
+    
+        render_events($filter, $filter_format, $show_more_format, $hide_recurrence, $num_events_to_show, $dev, $front, $show_all_when_none);
+    
+        return ob_get_clean();
+    }
 }
 
 ?>

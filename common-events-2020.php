@@ -17,6 +17,9 @@ include "functions/events_php-functions.php";
 // Actual rendering of the plugin.
 include "functions/events_html-vuejs.php";
 
+// Special case for custom `event` post type for arts.cah.ucf.edu.
+include "functions/arts-events.php";
+
 // Developer functions for testing and debugging.
 // NOTE: This is active wherever the plugin is used.
 // include "functions/dev.php";
