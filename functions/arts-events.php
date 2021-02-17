@@ -29,7 +29,7 @@ function handle_arts_events($show_more_format, $num_events_to_show) {
                 'subtitle' => $meta['wps_subtitle'][0],
                 'excerpt' => $event->post_excerpt,
                 'url' => $event->guid,
-                'thumbnail_url' => get_the_post_thumbnail_url($id),
+                'thumbnail_url' => get_the_post_thumbnail_url($id, "thumbnail"),
                 'start_date' => date_if_empty($meta['start_date'][0]),
                 'end_date' => date_if_empty($meta['end_date'][0]),
                 'start_time' => time_if_empty($meta['start_time'][0]),
@@ -47,11 +47,10 @@ function handle_arts_events($show_more_format, $num_events_to_show) {
     });
 
     // echo "<pre>";
-    // print_r($events);
-    // // print_r(get_post_meta(6185));
+    // // print_r($events);
+    // print_r(get_post_meta(6185));
     // echo "</pre>";
 
-    // return render_arts_events($events, "paged", "-1");
     return render_arts_events($events, $show_more_format, $num_events_to_show);
 
 }
