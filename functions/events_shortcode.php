@@ -21,6 +21,7 @@ function events_handler($atts = []) {
         'num-events' => 5,
         'front' => false,
         'show-all-when-none' => false,
+        'arts-filter' => '',
     ], $atts);
 
     $filter = '';
@@ -30,6 +31,7 @@ function events_handler($atts = []) {
     $num_events_to_show = 5;
     $front = false;
     $show_all_when_none = false;
+    $arts_filter = '';
 
     // Really janky way to enforce default values.
     if ($atts['filter']) {
@@ -52,6 +54,9 @@ function events_handler($atts = []) {
     }
     if ($atts['show-all-when-none'] && strtolower($atts['show-all-when-none']) === "true") {
         $show_all_when_none = strtolower($atts['show-all-when-none']);
+    }
+    if ($atts['arts-filter']) {
+        $arts_filter = strtolower($atts['arts-filter']);
     }
 
     // For enabling and disabling dev features and Vuejs modes.
@@ -130,7 +135,7 @@ function events_handler($atts = []) {
 
         ob_start();
         
-        handle_arts_events($show_more_format, $num_events_to_show);
+        handle_arts_events($show_more_format, $num_events_to_show, $arts_filter);
 
         return ob_get_clean();
     } else {

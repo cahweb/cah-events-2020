@@ -62,6 +62,8 @@ The attributes `filter` and `num-events` are not necessary here since they are t
 
 This is for use on the [Arts at UCF](https://arts.cah.ucf.edu/) site.
 
+> **NOTE:** Each Arts Event requires being `published` and having a set start `Date` and start `Time`.
+
 It's essentially a simpler version of the events plugin described above, with only three parameters:
 
 | Name               | Options                            | Description                                                                                                                                                                    | Example                                                                                                                        |
