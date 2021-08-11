@@ -34,6 +34,9 @@
 */
 
 function render_events($filter, $filter_format, $show_more_format, $hide_recurrence, $num_events_to_show, $dev, $front, $show_all_when_none) {
+    if (is_ie()) {
+        echo '<div class="alert alert-warning">Sorry, IE is not supported. Please consider using Firefox, Chrome, Edge, or other modern browsers.</div>';
+    } else {
 
     ?>
 
@@ -301,7 +304,8 @@ function render_events($filter, $filter_format, $show_more_format, $hide_recurre
             echo '<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>';
             } else {
             // Production version 2.6.11.
-            echo '<script src="https://cdn.jsdelivr.net/npm/vue@2.6.11"></script>';
+            // echo '<script src="https://cdn.jsdelivr.net/npm/vue@2.6.11"></script>';
+            echo '<script src="https://cdn.jsdelivr.net/npm/vue@2.6.14"></script>';
             }
         ?>
 
@@ -583,7 +587,17 @@ function render_events($filter, $filter_format, $show_more_format, $hide_recurre
         </script>
 
     <?
+    }
+}
 
+function is_ie() {
+    $info = $_SERVER['HTTP_USER_AGENT'];
+    
+    if (strpos($info, "Trident") !== false || strpos($info, "MSIE") !== false) {
+        return true;
+    } else {
+        return false;
+    }
 }
 
 ?>

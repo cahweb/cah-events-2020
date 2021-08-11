@@ -57,25 +57,3 @@ The current shortcode configuration for CAH Upcoming Events located at https://w
 [events filter="all" filter-format="list" show-more-format="paged" hide-recurrence="true" num-events="5"]
 ```
 The attributes `filter` and `num-events` are not necessary here since they are the default values.
-
-### Arts Events
-
-This is for use on the [Arts at UCF](https://arts.cah.ucf.edu/) site.
-
-> **NOTE:** Each Arts Event requires being `published` and having a set start `Date` and start `Time`.
-
-It's essentially a simpler version of the events plugin described above, with only three parameters:
-
-| Name               | Options                            | Description                                                                                                                                                                    | Example                                                                                                                        |
-| ------------------ | ---------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------ |
-| `filter`           | `arts`                             | Will display a list of the custom Events post type for Arts at UCF site.                                                                                                       | `[events filter="arts"]`                                                                                                       |
-|                    |                                    |                                                                                                                                                                                |                                                                                                                                |
-| `num-events`       |                                    | Determines the amount of events to show (per page, if selected below). It will also determine how many events to append when using the `button` option for `show-more-format`. | `[events filter="arts"]`                                                                                                       |
-|                    | `-1`, `all`, or `""` (**DEFAULT**) | Will list all events.                                                                                                                                                          | `[events filter="arts" num-events="-1"]`, `[events filter="arts" num-events="all"]`, or `[events filter="arts" num-events=""]` |
-|                    | Any integer                        | `n` number of events will be shown.                                                                                                                                            | `[events filter="arts" num-events="10"]`                                                                                       |
-|                    |                                    |                                                                                                                                                                                |                                                                                                                                |
-| `show-more-format` |                                    | Determines if there will be an option to display more events and what it'll be. This will be ignored if `num-events` is its default value.                                     | `[events filter="arts" num-events="10" show-more-format="none"]`                                                               |
-|                    | `none` or `""` (**DEFAULT**)       | No option will be given at the end of events to display more.                                                                                                                  |                                                                                                                                |
-|                    | `button` or `btn`                  | Will display a "SHOW MORE" button at the bottom of the listed events that, when clicked, will show the next however many events is set by `num-pages`.                         | `[events filter="arts" num-events="10" show-more-format="btn"]`                                                                |
-|                    | `paged`                            | Will display the number of pages at bottom of the listed events which can be used to navigate.                                                                                 | `[events filter="arts" num-events="10" show-more-format="paged"]`                                                              |
-
