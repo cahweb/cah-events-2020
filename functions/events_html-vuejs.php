@@ -1,4 +1,4 @@
-<?
+<?php
 
 /*
     ----------------------------    
@@ -42,7 +42,7 @@ function render_events($filter, $filter_format, $show_more_format, $hide_recurre
 
         <div id="app" class="">
 
-            <? if ($dev) { ?>
+            <?php if ($dev) { ?>
                 <div v-show="true" style="width: 75%; padding: 2%; margin: auto auto; background-color: #f9e7c9; border-color: #eddaba; border-style: solid; border-radius: 8px;" class="mb-5">
                     <p class="m-0 text-uppercase font-weight-bold letter-spacing-5">
                         Vue.js Data
@@ -132,7 +132,7 @@ function render_events($filter, $filter_format, $show_more_format, $hide_recurre
                         </li>
                     </ul>
                 </div>
-            <? } ?>
+            <?php } ?>
 
             <div v-if="front">
                 <div class="py-5 pl-5 pr-4"
@@ -215,10 +215,10 @@ function render_events($filter, $filter_format, $show_more_format, $hide_recurre
                             </div>
 
                             <div v-bind:class="[filterFormat === 'list' ? 'col-sm-9' : '']">
-                                <div v-if="filteredEvents.length === 0 || <? if ($show_all_when_none) { echo "true"; } else { echo "false"; } ?>" class="mb-3">
-                                    <p class="font-serif" style="font-style: italic">There are currently no upcoming events<span v-if="givenFilter !== '' && currentFilter === '' && currentFilter !== 'All'"> for {{ getCurrentFilter }}</span><span v-else> for {{ currentFilter }}</span>. <? if ($show_all_when_none) { echo "Check out these events from the UCF College of Arts and Humanities."; } ?></p>
+                                <div v-if="filteredEvents.length === 0 || <?php if ($show_all_when_none) { echo "true"; } else { echo "false"; } ?>" class="mb-3">
+                                    <p class="font-serif" style="font-style: italic">There are currently no upcoming events<span v-if="givenFilter !== '' && currentFilter === '' && currentFilter !== 'All'"> for {{ getCurrentFilter }}</span><span v-else> for {{ currentFilter }}</span>. <?php if ($show_all_when_none) { echo "Check out these events from the UCF College of Arts and Humanities."; } ?></p>
                                 </div>
-                                <ul v-if="filteredEvents.length > 0 || <? if ($show_all_when_none) { echo "true"; } else { echo "false"; } ?>" class="list-unstyled">
+                                <ul v-if="filteredEvents.length > 0 || <?php if ($show_all_when_none) { echo "true"; } else { echo "false"; } ?>" class="list-unstyled">
                                     <a class="cah-event-item"
                                         v-for="(event, index) in filteredEvents"
                                         v-bind:href="event.url"
@@ -298,7 +298,7 @@ function render_events($filter, $filter_format, $show_more_format, $hide_recurre
             </div>
         </div>
 
-        <?
+        <?php
             if ($dev) {
             // Most up-to-date developer version of Vue.js.
             echo '<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>';
@@ -313,9 +313,8 @@ function render_events($filter, $filter_format, $show_more_format, $hide_recurre
             const v = new Vue({
                 el: "#app",
                 data: {
-                    json: <? print json_encode(index_events()) ?>,
-                    endDateArray: <? print json_encode(event_end_dates()) ?>,
-                    
+                    json: <?= @json_encode(index_events()) ?>,
+                    endDateArray: <?= @json_encode(event_end_dates()) ?>,
                     currentFilter: "",
                     givenFilter: "<?= $filter ?>",
                     uniqueEventIds: [],
@@ -326,8 +325,8 @@ function render_events($filter, $filter_format, $show_more_format, $hide_recurre
                         "SVAD",
                         "Theatre",
                     ],
-                    filterFormat: "<?= normalize_string($filter_format) ?>",
-                    showMoreFormat: "<?= normalize_string($show_more_format) ?>",
+                    filterFormat: "<?= @normalize_string($filter_format) ?>",
+                    showMoreFormat: "<?= @normalize_string($show_more_format) ?>",
 
                     hideRecurrence: <?= $hide_recurrence ?>,
                     pagination: true,
@@ -338,7 +337,7 @@ function render_events($filter, $filter_format, $show_more_format, $hide_recurre
                     appendToIndexRange: false,
 
                     front: <?= $front ?>,
-                    frontBgImg: "<?= plugin_dir_url(__DIR__, 1) . "imgs/knight.jpg"; ?>",
+                    frontBgImg: "<?= @plugin_dir_url(__DIR__, 1) . "imgs/knight.jpg"; ?>",
                 },
                 computed: {
                     getCurrentFilter: function() {
@@ -370,7 +369,7 @@ function render_events($filter, $filter_format, $show_more_format, $hide_recurre
                     },
                     filteredEvents: function() {
                         let givenFilter = this.givenFilter
-                        <?
+                        <?php
                             if ($show_all_when_none) {
                                 echo "givenFilter = ''";
                             }
@@ -586,7 +585,7 @@ function render_events($filter, $filter_format, $show_more_format, $hide_recurre
             })
         </script>
 
-    <?
+    <?php
     }
 }
 

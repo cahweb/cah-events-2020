@@ -85,7 +85,7 @@ function get_unique_event_ids() {
 // Indexes each unique event and their end dates if they occur multiple times.
 function event_end_dates() {
     $original_events_array = index_events();
-    $unique_event_ids = get_unique_event_ids($dev);
+    $unique_event_ids = get_unique_event_ids();
     $ids_end_dates = array();
     
     if (!empty($unique_event_ids)) {
